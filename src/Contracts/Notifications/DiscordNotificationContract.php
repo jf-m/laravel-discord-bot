@@ -3,20 +3,15 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Contracts\Notifications;
 
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
+
 interface DiscordNotificationContract
 {
     /**
      * Returns a Discord-API compliant notification array.
      *
      * @param mixed $notifiable
-     * @return array{
-     *      contentType: 'plain'|'rich',
-     *      channelId: string,
-     *      message?: string, // Valid for `plain` contentType
-     *      embeds?: Embed[], // Valid for `rich` contentType
-     *      components?: Component[], // Valid for `components` contentType
-     *      options?: array
-     * }
+     * @return DiscordMessage
      */
-    public function toDiscord($notifiable): array;
+    public function toDiscord($notifiable): DiscordMessage;
 }

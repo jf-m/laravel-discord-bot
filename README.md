@@ -68,6 +68,8 @@ use Illuminate\Notifications\Notification;
 use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContract;
 use Nwilging\LaravelDiscordBot\Support\Builder\ComponentBuilder;
 use Nwilging\LaravelDiscordBot\Support\Builder\EmbedBuilder;
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
+use Nwilging\LaravelDiscordBot\Messages\PlainDiscordMessage;
 
 class TestNotification extends Notification implements DiscordNotificationContract
 {
@@ -78,13 +80,11 @@ class TestNotification extends Notification implements DiscordNotificationContra
         return ['discord'];
     }
 
-    public function toDiscord($notifiable): array
+    public function toDiscord($notifiable): DiscordMessage
     {
-        return [
-            'contentType' => 'plain',
-            'channelId' => 'channel ID',
-            'message' => 'message content',
-        ];
+        return (new PlainDiscordMessage())
+            ->channelId('channel ID')
+            ->message('message content');
     }
 }
 ```
@@ -100,6 +100,8 @@ use Illuminate\Notifications\Notification;
 use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContract;
 use Nwilging\LaravelDiscordBot\Support\Builder\ComponentBuilder;
 use Nwilging\LaravelDiscordBot\Support\Builder\EmbedBuilder;
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
+use Nwilging\LaravelDiscordBot\Messages\RichDiscordMessage;
 
 class TestNotification extends Notification implements DiscordNotificationContract
 {
@@ -110,7 +112,7 @@ class TestNotification extends Notification implements DiscordNotificationContra
         return ['discord'];
     }
 
-    public function toDiscord($notifiable): array
+    public function toDiscord($notifiable): DiscordMessage
     {
         $embedBuilder = new EmbedBuilder();
         $embedBuilder->addAuthor('Me!');
@@ -118,14 +120,12 @@ class TestNotification extends Notification implements DiscordNotificationContra
         $componentBuilder = new ComponentBuilder();
         $componentBuilder->addActionButton('My Button', 'customId');
 
-        return [
-            'contentType' => 'rich',
-            'channelId' => 'channel id',
-            'embeds' => $embedBuilder->getEmbeds(),
-            'components' => [
-                $componentBuilder->getActionRow(),
-            ],
-        ];
+        return (new RichDiscordMessage())
+            ->channelId('channel id')
+            ->embeds($embedBuilder->getEmbeds())
+            ->components([
+                $componentBuilder->getActionRow()
+            ]);
     }
 }
 ```

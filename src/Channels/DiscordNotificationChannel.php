@@ -6,6 +6,8 @@ namespace Nwilging\LaravelDiscordBot\Channels;
 use Nwilging\LaravelDiscordBot\Contracts\Channels\DiscordNotificationChannelContract;
 use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContract;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
+use Nwilging\LaravelDiscordBot\Messages\PlainDiscordMessage;
+use Nwilging\LaravelDiscordBot\Messages\RichDiscordMessage;
 
 class DiscordNotificationChannel implements DiscordNotificationChannelContract
 {
@@ -18,33 +20,24 @@ class DiscordNotificationChannel implements DiscordNotificationChannelContract
 
     public function send($notifiable, DiscordNotificationContract $notification): array
     {
-        $notificationArray = $notification->toDiscord($notifiable);
-        switch ($notificationArray['contentType']) {
-            case 'plain':
-                return $this->handleTextMessage($notificationArray);
-            case 'rich':
-                return $this->handleRichTextMessage($notificationArray);
-            default:
-                throw new \InvalidArgumentException(sprintf('%s is not a valid contentType', $notificationArray['contentType']));
+        $notificationMessage = $notification->toDiscord($notifiable);
+        if ($notificationMessage instanceof PlainDiscordMessage) {
+            return $this->handleTextMessage($notificationMessage);
+        } else if ($notificationMessage instanceof RichDiscordMessage) {
+            return $this->handleRichTextMessage($notificationMessage);
+        } else {
+            throw new \InvalidArgumentException(sprintf('%s is not a valid DiscordMessage', get_class($notificationMessage)));
+
         }
     }
 
-    protected function handleTextMessage(array $notificationArray): array
+    protected function handleTextMessage(PlainDiscordMessage $notificationMessage): array
     {
-        $channelId = $notificationArray['channelId'];
-        $message = $notificationArray['message'];
-        $options = $notificationArray['options'] ?? [];
-
-        return $this->discordApiService->sendTextMessage($channelId, $message, $options);
+        return $this->discordApiService->sendTextMessage($notificationMessage->channelId, $notificationMessage->message, $notificationMessage->options ?: []);
     }
 
-    protected function handleRichTextMessage(array $notificationArray): array
+    protected function handleRichTextMessage(RichDiscordMessage $notificationMessage): array
     {
-        $channelId = $notificationArray['channelId'];
-        $embeds = $notificationArray['embeds'] ?? [];
-        $components = $notificationArray['components'] ?? [];
-        $options = $notificationArray['options'] ?? [];
-
-        return $this->discordApiService->sendRichTextMessage($channelId, $embeds, $components, $options);
+        return $this->discordApiService->sendRichTextMessage($notificationMessage->channelId, $notificationMessage->embeds ?: [], $notificationMessage->components ?: [], $notificationMessage->options ?: []);
     }
 }
