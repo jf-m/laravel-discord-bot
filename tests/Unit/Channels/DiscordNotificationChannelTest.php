@@ -8,8 +8,7 @@ use Mockery\MockInterface;
 use Nwilging\LaravelDiscordBot\Channels\DiscordNotificationChannel;
 use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContract;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
-use Nwilging\LaravelDiscordBot\Messages\PlainDiscordMessage;
-use Nwilging\LaravelDiscordBot\Messages\RichDiscordMessage;
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Nwilging\LaravelDiscordBotTests\TestCase;
@@ -33,7 +32,7 @@ class DiscordNotificationChannelTest extends TestCase
         $notifiable = \Mockery::mock(Notifiable::class);
         $notification = \Mockery::mock(DiscordNotificationContract::class);
 
-        $discordNotificationMessage = (new PlainDiscordMessage())
+        $discordNotificationMessage = (new DiscordMessage())
             ->channelId('12345')
             ->message('test message');
 
@@ -46,9 +45,9 @@ class DiscordNotificationChannelTest extends TestCase
             ->with($notifiable)
             ->andReturn($discordNotificationMessage);
 
-        $this->discordApiService->shouldReceive('sendTextMessage')
+        $this->discordApiService->shouldReceive('sendMessage')
             ->once()
-            ->with('12345', 'test message', [])
+            ->with('12345', 'test message', null, null, null)
             ->andReturn($expectedResponse);
 
         $result = $this->channel->send($notifiable, $notification);
@@ -66,7 +65,7 @@ class DiscordNotificationChannelTest extends TestCase
         $component1 = \Mockery::mock(Component::class);
         $component2 = \Mockery::mock(Component::class);
 
-        $discordNotificationMessage = (new RichDiscordMessage())
+        $discordNotificationMessage = (new DiscordMessage())
             ->channelId('12345')
             ->embeds([$embed1, $embed2])
             ->components([$component1, $component2]);
@@ -80,9 +79,9 @@ class DiscordNotificationChannelTest extends TestCase
             ->with($notifiable)
             ->andReturn($discordNotificationMessage);
 
-        $this->discordApiService->shouldReceive('sendRichTextMessage')
+        $this->discordApiService->shouldReceive('sendMessage')
             ->once()
-            ->with('12345', [$embed1, $embed2], [$component1, $component2], [])
+            ->with('12345', null, [$embed1, $embed2], [$component1, $component2], null)
             ->andReturn($expectedResponse);
 
         $result = $this->channel->send($notifiable, $notification);

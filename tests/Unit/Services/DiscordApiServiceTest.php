@@ -58,7 +58,7 @@ class DiscordApiServiceTest extends TestCase
             ])
             ->andReturn($responseMock);
 
-        $result = $this->service->sendTextMessage($channelId, $message);
+        $result = $this->service->sendMessage($channelId, $message);
         $this->assertEquals($expectedResponse, $result);
     }
 
@@ -108,7 +108,7 @@ class DiscordApiServiceTest extends TestCase
             ])
             ->andReturn($responseMock);
 
-        $result = $this->service->sendRichTextMessage($channelId, [$embed1, $embed2], [$component1, $component2]);
+        $result = $this->service->sendMessage($channelId, null, [$embed1, $embed2], [$component1, $component2]);
         $this->assertEquals($expectedResponse, $result);
     }
 }

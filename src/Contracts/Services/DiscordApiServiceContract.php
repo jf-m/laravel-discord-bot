@@ -7,13 +7,5 @@ use Nwilging\LaravelDiscordBot\Support\Embed;
 
 interface DiscordApiServiceContract
 {
-    public function sendTextMessage(string $channelId, string $message, array $options = []): array;
-
-    /**
-     * @param string $channelId
-     * @param Embed[] $embeds
-     * @param array $options
-     * @return void
-     */
-    public function sendRichTextMessage(string $channelId, array $embeds, array $components = [], array $options = []): array;
+    public function sendMessage(string $channelId, ?string $message = null, ?array $embeds = null, ?array $components = null, ?array $options = null): array;
 }

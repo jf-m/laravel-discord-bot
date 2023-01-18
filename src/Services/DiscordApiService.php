@@ -26,36 +26,34 @@ class DiscordApiService implements DiscordApiServiceContract
         $this->httpClient = $httpClient;
     }
 
-    public function sendTextMessage(string $channelId, string $message, array $options = []): array
+    public function sendMessage(string $channelId, ?string $message = null, ?array $embeds = null, ?array $components = null, ?array $options = null): array
     {
+        $payload = [];
+
+        if ($embeds) {
+            $payload['embeds'] = array_map(function (Embed $embed): array {
+                return $embed->toArray();
+            }, $embeds);
+        }
+
+        if ($components) {
+            $payload['components'] = array_map(function (Component $component): array {
+                return $component->toArray();
+            }, $components);
+        }
+
+        if ($message) {
+            $payload['content'] = $message;
+        }
+
+        if ($options) {
+            $payload = array_merge($this->buildMessageOptions($options), $payload);
+        }
+
         $response = $this->makeRequest(
             'POST',
             sprintf('channels/%s/messages', $channelId),
-            array_merge($this->buildMessageOptions($options), [
-                'content' => $message,
-            ]),
-        );
-
-        return json_decode($response->getBody()->getContents(), true);
-    }
-
-    public function sendRichTextMessage(string $channelId, array $embeds, array $components = [], array $options = []): array
-    {
-        $embedArrays = array_map(function (Embed $embed): array {
-            return $embed->toArray();
-        }, $embeds);
-
-        $componentArrays = array_map(function (Component $component): array {
-            return $component->toArray();
-        }, $components);
-
-        $response = $this->makeRequest(
-            'POST',
-            sprintf('channels/%s/messages', $channelId),
-            array_merge($this->buildMessageOptions($options), [
-                'embeds' => $embedArrays,
-                'components' => $componentArrays,
-            ]),
+            $payload
         );
 
         return json_decode($response->getBody()->getContents(), true);
