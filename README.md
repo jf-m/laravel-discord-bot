@@ -69,7 +69,6 @@ use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContra
 use Nwilging\LaravelDiscordBot\Support\Builder\ComponentBuilder;
 use Nwilging\LaravelDiscordBot\Support\Builder\EmbedBuilder;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
-use Nwilging\LaravelDiscordBot\Messages\PlainDiscordMessage;
 
 class TestNotification extends Notification implements DiscordNotificationContract
 {
@@ -82,7 +81,7 @@ class TestNotification extends Notification implements DiscordNotificationContra
 
     public function toDiscord($notifiable): DiscordMessage
     {
-        return (new PlainDiscordMessage())
+        return (new DiscordMessage())
             ->channelId('channel ID')
             ->message('message content');
     }
@@ -101,7 +100,6 @@ use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContra
 use Nwilging\LaravelDiscordBot\Support\Builder\ComponentBuilder;
 use Nwilging\LaravelDiscordBot\Support\Builder\EmbedBuilder;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
-use Nwilging\LaravelDiscordBot\Messages\RichDiscordMessage;
 
 class TestNotification extends Notification implements DiscordNotificationContract
 {
@@ -120,7 +118,8 @@ class TestNotification extends Notification implements DiscordNotificationContra
         $componentBuilder = new ComponentBuilder();
         $componentBuilder->addActionButton('My Button', 'customId');
 
-        return (new RichDiscordMessage())
+        return (new DiscordMessage())
+            ->message('message content')
             ->channelId('channel id')
             ->embeds($embedBuilder->getEmbeds())
             ->components([
