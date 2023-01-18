@@ -26,6 +26,10 @@ abstract class Component implements Arrayable
         $this->customId = $customId;
     }
 
+    public function getCustomId(): ?string {
+        return $this->customId;
+    }
+
     public abstract function getType(): int;
 
     /**
@@ -39,7 +43,7 @@ abstract class Component implements Arrayable
     {
         return $this->arrayFilterRecursive([
             'type' => $this->getType(),
-            'custom_id' => $this->customId,
+            'custom_id' => $this->getCustomId(),
         ]);
     }
 }

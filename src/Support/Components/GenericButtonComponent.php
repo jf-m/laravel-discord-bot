@@ -53,7 +53,7 @@ abstract class GenericButtonComponent extends Component
     {
         return $this->arrayFilterRecursive($this->mergeEmojiObject([
             'type' => $this->getType(),
-            'custom_id' => $this->customId,
+            'custom_id' => $this->getCustomId(),
             'style' => $this->style,
             'label' => $this->label,
             'disabled' => $this->disabled,

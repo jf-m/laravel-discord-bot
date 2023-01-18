@@ -115,7 +115,7 @@ abstract class GenericTextInputComponent extends Component
     {
         return $this->arrayFilterRecursive([
             'type' => $this->getType(),
-            'custom_id' => $this->customId,
+            'custom_id' => $this->getCustomId(),
             'style' => $this->style,
             'label' => $this->label,
             'min_length' => $this->minLength,
