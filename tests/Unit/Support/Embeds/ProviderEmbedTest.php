@@ -11,9 +11,22 @@ class ProviderEmbedTest extends TestCase
 {
     public function testEmbed()
     {
-        $embed = new ProviderEmbed();
+        $name = 'test name';
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
+        $embed = new Embed($title, $description, $timestamp);
+
+        $providerEmbed = new ProviderEmbed($name);
+        $embed->withProvider($providerEmbed);
+
         $this->assertEquals([
-            'type' => Embed::TYPE_PROVIDER,
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
+            'provider' => [
+                'name' => $name,
+            ],
         ], $embed->toArray());
     }
 
@@ -25,13 +38,12 @@ class ProviderEmbedTest extends TestCase
         $url = 'https://example.com';
         $name = 'test name';
 
-        $embed = new ProviderEmbed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $timestamp);
 
-        $embed->withName($name);
-        $embed->withUrl($url);
+        $providerEmbed = new ProviderEmbed($name, $url);
+        $embed->withProvider($providerEmbed);
 
         $this->assertEquals([
-            'type' => Embed::TYPE_PROVIDER,
             'provider' => [
                 'url' => $url,
                 'name' => $name,

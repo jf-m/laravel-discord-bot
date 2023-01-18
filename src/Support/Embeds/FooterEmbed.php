@@ -10,21 +10,26 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  * Footer Embed
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-footer-structure
  */
-class FooterEmbed extends Embed
+class FooterEmbed extends EmbedObject
 {
-    use MergesArrays;
-
     protected string $text;
 
     protected ?string $iconUrl = null;
 
     protected ?string $proxyIconUrl = null;
 
-    public function __construct(string $text, ?string $title = null, ?string $description = null, ?string $timestamp = null)
+    /**
+     * @param string $text
+     * @param string|null $iconUrl
+     * @param string|null $proxyIconUrl
+     */
+    public function __construct(string $text, ?string $iconUrl = null, ?string $proxyIconUrl = null)
     {
-        parent::__construct($title, $description, $timestamp);
         $this->text = $text;
+        $this->iconUrl = $iconUrl;
+        $this->proxyIconUrl = $proxyIconUrl;
     }
+
 
     /**
      * URL of footer icon (only supports http(s) and attachments)
@@ -52,19 +57,12 @@ class FooterEmbed extends Embed
         return $this;
     }
 
-    public function getType(): string
-    {
-        return static::TYPE_FOOTER;
-    }
-
     public function toArray(): array
     {
-        return $this->toMergedArray([
-            'footer' => [
-                'text' => $this->text,
-                'icon_url' => $this->iconUrl,
-                'proxy_icon_url' => $this->proxyIconUrl,
-            ],
+        return array_filter([
+            'text' => $this->text,
+            'icon_url' => $this->iconUrl,
+            'proxy_icon_url' => $this->proxyIconUrl,
         ]);
     }
 }

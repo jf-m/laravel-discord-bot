@@ -4,28 +4,21 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Nwilging\LaravelDiscordBot\Support\Embeds\AuthorEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\FieldEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\FooterEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\ImageEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\ProviderEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\ThumbnailEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\VideoEmbed;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 
 /**
- * Abstract Embed Object
+ * Embed Object
  * @see https://discord.com/developers/docs/resources/channel#embed-object
  */
-abstract class Embed implements Arrayable
+class Embed implements Arrayable
 {
-    use FiltersRecursive;
-
-    public const TYPE_RICH = 'rich';
-    public const TYPE_IMAGE = 'image';
-    public const TYPE_VIDEO = 'video';
-    public const TYPE_GIFV = 'gifv';
-    public const TYPE_ARTICLE = 'article';
-    public const TYPE_LINK = 'link';
-    public const TYPE_FOOTER = 'footer';
-    public const TYPE_THUMBNAIL = 'thumbnail';
-    public const TYPE_PROVIDER = 'provider';
-    public const TYPE_AUTHOR = 'author';
-    public const TYPE_FIELD = 'field';
-
     protected ?string $title = null;
 
     protected ?string $description = null;
@@ -34,7 +27,24 @@ abstract class Embed implements Arrayable
 
     protected ?int $color = null;
 
-    protected function __construct(?string $title = null, ?string $description = null, ?string $timestamp = null)
+    /**
+     * @var array<FieldEmbed>|null
+     */
+    protected ?array $fields = null;
+
+    protected ?VideoEmbed $video = null;
+
+    protected ?AuthorEmbed $author = null;
+
+    protected ?FooterEmbed $footer = null;
+
+    protected ?ImageEmbed $image = null;
+
+    protected ?ProviderEmbed $provider = null;
+
+    protected ?ThumbnailEmbed $thumbnail = null;
+
+    public function __construct(?string $title = null, ?string $description = null, ?string $timestamp = null)
     {
         $this->title = $title;
         $this->description = $description;
@@ -55,7 +65,50 @@ abstract class Embed implements Arrayable
         return $this;
     }
 
-    public abstract function getType(): string;
+    public function withField(FieldEmbed $field): self
+    {
+        if ($this->fields === null) {
+            $this->fields = [];
+        }
+        $this->fields[] = $field;
+        return $this;
+    }
+
+    public function withVideo(VideoEmbed $video): self
+    {
+        $this->video = $video;
+        return $this;
+    }
+
+    public function withAuthor(AuthorEmbed $author): self
+    {
+        $this->author = $author;
+        return $this;
+    }
+
+    public function withFooter(FooterEmbed $footer): self
+    {
+        $this->footer = $footer;
+        return $this;
+    }
+
+    public function withImage(ImageEmbed $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    public function withProvider(ProviderEmbed $provider): self
+    {
+        $this->provider = $provider;
+        return $this;
+    }
+
+    public function withThumbnail(ThumbnailEmbed $thumbnail): self
+    {
+        $this->thumbnail = $thumbnail;
+        return $this;
+    }
 
     /**
      * Returns a Discord-API compliant embed array
@@ -66,12 +119,18 @@ abstract class Embed implements Arrayable
      */
     public function toArray(): array
     {
-        return $this->arrayFilterRecursive([
-            'type' => $this->getType(),
+        return array_filter([
             'title' => $this->title,
             'description' => $this->description,
             'timestamp' => $this->timestamp,
             'color' => $this->color,
+            'fields' => array_map(fn(FieldEmbed $embed) => $embed->toArray(), $this->fields ? $this->fields : []),
+            'video' => $this->video ? $this->video->toArray() : null,
+            'author' => $this->author ? $this->author->toArray() : null,
+            'footer' => $this->footer ? $this->footer->toArray() : null,
+            'image' => $this->image ? $this->image->toArray() : null,
+            'provider' => $this->provider ? $this->provider->toArray() : null,
+            'thumbnail' => $this->thumbnail ? $this->thumbnail->toArray() : null
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Builder;
 
 use Nwilging\LaravelDiscordBot\Support\Builder\EmbedBuilder;
 use Nwilging\LaravelDiscordBot\Support\Embed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\EmbedObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 
 class EmbedBuilderTest extends TestCase
@@ -16,8 +17,8 @@ class EmbedBuilderTest extends TestCase
         $expectedEmbed1Array = ['k1' => 'v1'];
         $expectedEmbed2Array = ['k2' => 'v2'];
 
-        $embed1 = \Mockery::mock(Embed::class);
-        $embed2 = \Mockery::mock(Embed::class);
+        $embed1 = \Mockery::mock(EmbedObject::class);
+        $embed2 = \Mockery::mock(EmbedObject::class);
 
         $embed1->shouldReceive('toArray')->andReturn($expectedEmbed1Array);
         $embed2->shouldReceive('toArray')->andReturn($expectedEmbed2Array);
@@ -40,10 +41,7 @@ class EmbedBuilderTest extends TestCase
 
         $this->assertEquals([
             [
-                'type' => Embed::TYPE_FOOTER,
-                'footer' => [
-                    'text' => $footerText,
-                ],
+                'text' => $footerText,
             ]
         ], $builder->toArray());
     }
@@ -57,10 +55,7 @@ class EmbedBuilderTest extends TestCase
 
         $this->assertEquals([
             [
-                'type' => Embed::TYPE_IMAGE,
-                'image' => [
-                    'url' => $imageUrl,
-                ],
+                'url' => $imageUrl,
             ]
         ], $builder->toArray());
     }
@@ -74,10 +69,7 @@ class EmbedBuilderTest extends TestCase
 
         $this->assertEquals([
             [
-                'type' => Embed::TYPE_THUMBNAIL,
-                'image' => [
-                    'url' => $imageUrl,
-                ],
+                'url' => $imageUrl,
             ]
         ], $builder->toArray());
     }
@@ -91,10 +83,7 @@ class EmbedBuilderTest extends TestCase
 
         $this->assertEquals([
             [
-                'type' => Embed::TYPE_VIDEO,
-                'video' => [
-                    'url' => $videoUrl,
-                ],
+                'url' => $videoUrl,
             ]
         ], $builder->toArray());
     }
@@ -109,11 +98,8 @@ class EmbedBuilderTest extends TestCase
 
         $this->assertEquals([
             [
-                'type' => Embed::TYPE_PROVIDER,
-                'provider' => [
-                    'name' => $name,
-                    'url' => $url,
-                ],
+                'name' => $name,
+                'url' => $url,
             ]
         ], $builder->toArray());
     }
@@ -127,10 +113,7 @@ class EmbedBuilderTest extends TestCase
 
         $this->assertEquals([
             [
-                'type' => Embed::TYPE_AUTHOR,
-                'author' => [
-                    'name' => $authorName,
-                ],
+                'name' => $authorName,
             ]
         ], $builder->toArray());
     }

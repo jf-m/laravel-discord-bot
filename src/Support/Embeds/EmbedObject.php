@@ -7,9 +7,10 @@ use Nwilging\LaravelDiscordBot\Support\Embed;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 
 /**
- * Video Embed
- * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-video-structure
+ * Embed Object
+ * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-structure
  */
-class VideoEmbed extends ImageEmbed
+abstract class EmbedObject
 {
+    abstract public function toArray(): array;
 }

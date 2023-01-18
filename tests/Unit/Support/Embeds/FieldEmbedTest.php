@@ -11,15 +11,22 @@ class FieldEmbedTest extends TestCase
 {
     public function testEmbed()
     {
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
+        $embed = new Embed($title, $description, $timestamp);
         $name = 'test name';
         $value = 'test value';
-
-        $embed = new FieldEmbed($name, $value);
+        $embed->withField(new FieldEmbed($name, $value));
         $this->assertEquals([
-            'type' => Embed::TYPE_FIELD,
-            'field' => [
-                'name' => $name,
-                'value' => $value,
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
+            'fields' => [
+                [
+                    'name' => $name,
+                    'value' => $value,
+                ]
             ],
         ], $embed->toArray());
     }
@@ -33,16 +40,21 @@ class FieldEmbedTest extends TestCase
         $description = 'test description';
         $timestamp = '12345';
 
-        $embed = new FieldEmbed($name, $value, $title, $description, $timestamp);
-        $embed->inline();
+        $embed = new Embed($title, $description, $timestamp);
         $embed->withColor($color);
 
+        $fieldEmbed = new FieldEmbed($name, $value);
+        $fieldEmbed->inline();
+
+        $embed->withField($fieldEmbed);
+
         $this->assertEquals([
-            'type' => Embed::TYPE_FIELD,
-            'field' => [
-                'name' => $name,
-                'value' => $value,
-                'inline' => true,
+            'fields' => [
+                [
+                    'name' => $name,
+                    'value' => $value,
+                    'inline' => true,
+                ]
             ],
             'title' => $title,
             'description' => $description,

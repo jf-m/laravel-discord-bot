@@ -10,7 +10,7 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  * Provider Embed
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-provider-structure
  */
-class ProviderEmbed extends Embed
+class ProviderEmbed extends EmbedObject
 {
     use MergesArrays;
 
@@ -18,10 +18,16 @@ class ProviderEmbed extends Embed
 
     protected ?string $url = null;
 
-    public function __construct(?string $title = null, ?string $description = null, ?string $timestamp = null)
+    /**
+     * @param string $name
+     * @param string|null $url
+     */
+    public function __construct(string $name, ?string $url = null)
     {
-        parent::__construct($title, $description, $timestamp);
+        $this->name = $name;
+        $this->url = $url;
     }
+
 
     /**
      * Name of provider
@@ -49,18 +55,11 @@ class ProviderEmbed extends Embed
         return $this;
     }
 
-    public function getType(): string
-    {
-        return static::TYPE_PROVIDER;
-    }
-
     public function toArray(): array
     {
-        return $this->toMergedArray([
-            'provider' => [
-                'name' => $this->name,
-                'url' => $this->url,
-            ],
+        return array_filter([
+            'name' => $this->name,
+            'url' => $this->url,
         ]);
     }
 }

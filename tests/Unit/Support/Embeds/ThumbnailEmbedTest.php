@@ -11,12 +11,19 @@ class ThumbnailEmbedTest extends TestCase
 {
     public function testEmbed()
     {
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
+        $embed = new Embed($title, $description, $timestamp);
         $url = 'https://example.com';
-        $embed = new ThumbnailEmbed($url);
+
+        $embed->withThumbnail(new ThumbnailEmbed($url));
 
         $this->assertEquals([
-            'type' => Embed::TYPE_THUMBNAIL,
-            'image' => [
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
+            'thumbnail' => [
                 'url' => $url,
             ],
         ], $embed->toArray());
@@ -32,16 +39,18 @@ class ThumbnailEmbedTest extends TestCase
         $proxyUrl = 'https://example.com/proxy';
         $height = 256;
         $width = 512;
+        $embed = new Embed($title, $description, $timestamp);
 
-        $embed = new ThumbnailEmbed($url, $title, $description, $timestamp);
+        $thumbNailEmbed = new ThumbnailEmbed($url, $title);
 
-        $embed->withProxyUrl($proxyUrl);
-        $embed->withWidth($width);
-        $embed->withHeight($height);
+        $thumbNailEmbed->withProxyUrl($proxyUrl);
+        $thumbNailEmbed->withWidth($width);
+        $thumbNailEmbed->withHeight($height);
+
+        $embed->withThumbnail($thumbNailEmbed);
 
         $this->assertEquals([
-            'type' => Embed::TYPE_THUMBNAIL,
-            'image' => [
+            'thumbnail' => [
                 'url' => $url,
                 'proxy_url' => $proxyUrl,
                 'height' => $height,

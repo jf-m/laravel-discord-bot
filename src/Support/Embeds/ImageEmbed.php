@@ -10,7 +10,7 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  * Image Embed
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
  */
-class ImageEmbed extends Embed
+class ImageEmbed extends EmbedObject
 {
     use MergesArrays;
 
@@ -22,11 +22,20 @@ class ImageEmbed extends Embed
 
     protected ?int $width = null;
 
-    public function __construct(string $url, ?string $title = null, ?string $description = null, ?string $timestamp = null)
+    /**
+     * @param string $url
+     * @param string|null $proxyUrl
+     * @param int|null $height
+     * @param int|null $width
+     */
+    public function __construct(string $url, ?string $proxyUrl = null, ?int $height = null, ?int $width = null)
     {
-        parent::__construct($title, $description, $timestamp);
         $this->url = $url;
+        $this->proxyUrl = $proxyUrl;
+        $this->height = $height;
+        $this->width = $width;
     }
+
 
     /**
      * A proxied url of the image
@@ -67,20 +76,13 @@ class ImageEmbed extends Embed
         return $this;
     }
 
-    public function getType(): string
-    {
-        return static::TYPE_IMAGE;
-    }
-
     public function toArray(): array
     {
-        return $this->toMergedArray([
-            'image' => [
-                'url' => $this->url,
-                'proxy_url' => $this->proxyUrl,
-                'height' => $this->height,
-                'width' => $this->width,
-            ],
+        return array_filter([
+            'url' => $this->url,
+            'proxy_url' => $this->proxyUrl,
+            'height' => $this->height,
+            'width' => $this->width,
         ]);
     }
 }

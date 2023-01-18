@@ -6,6 +6,7 @@ namespace Nwilging\LaravelDiscordBot\Support\Builder;
 use Nwilging\LaravelDiscordBot\Contracts\Support\Builder\EmbedBuilderContract;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Nwilging\LaravelDiscordBot\Support\Embeds\AuthorEmbed;
+use Nwilging\LaravelDiscordBot\Support\Embeds\EmbedObject;
 use Nwilging\LaravelDiscordBot\Support\Embeds\FooterEmbed;
 use Nwilging\LaravelDiscordBot\Support\Embeds\ImageEmbed;
 use Nwilging\LaravelDiscordBot\Support\Embeds\ProviderEmbed;
@@ -15,11 +16,11 @@ use Nwilging\LaravelDiscordBot\Support\Embeds\VideoEmbed;
 class EmbedBuilder implements EmbedBuilderContract
 {
     /**
-     * @var Embed[]
+     * @var EmbedObject[]
      */
     protected array $embeds = [];
 
-    public function addEmbed(Embed $embed): self
+    public function addEmbed(EmbedObject $embed): self
     {
         $this->embeds[] = $embed;
         return $this;
@@ -51,10 +52,7 @@ class EmbedBuilder implements EmbedBuilderContract
 
     public function addProvider(string $name, string $url): self
     {
-        $embed = new ProviderEmbed();
-        $embed->withName($name)->withUrl($url);
-
-        $this->addEmbed($embed);
+        $this->addEmbed(new ProviderEmbed($name, $url));
         return $this;
     }
 
@@ -71,7 +69,7 @@ class EmbedBuilder implements EmbedBuilderContract
 
     public function toArray(): array
     {
-        return array_map(function (Embed $embed): array {
+        return array_map(function (EmbedObject $embed): array {
             return $embed->toArray();
         }, $this->embeds);
     }

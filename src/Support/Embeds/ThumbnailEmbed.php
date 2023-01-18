@@ -9,8 +9,4 @@ namespace Nwilging\LaravelDiscordBot\Support\Embeds;
  */
 class ThumbnailEmbed extends ImageEmbed
 {
-    public function getType(): string
-    {
-        return static::TYPE_THUMBNAIL;
-    }
 }

@@ -11,11 +11,17 @@ class ImageEmbedTest extends TestCase
 {
     public function testEmbed()
     {
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
         $url = 'https://example.com';
-        $embed = new ImageEmbed($url);
+        $embed = new Embed($title, $description, $timestamp);
+        $embed->withImage(new ImageEmbed($url));
 
         $this->assertEquals([
-            'type' => Embed::TYPE_IMAGE,
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
             'image' => [
                 'url' => $url,
             ],
@@ -33,14 +39,17 @@ class ImageEmbedTest extends TestCase
         $height = 256;
         $width = 512;
 
-        $embed = new ImageEmbed($url, $title, $description, $timestamp);
+        $embed = new Embed($title, $description, $timestamp);
 
-        $embed->withProxyUrl($proxyUrl);
-        $embed->withWidth($width);
-        $embed->withHeight($height);
+        $imageEmbed = new ImageEmbed($url);
+
+        $imageEmbed->withProxyUrl($proxyUrl);
+        $imageEmbed->withWidth($width);
+        $imageEmbed->withHeight($height);
+
+        $embed->withImage($imageEmbed);
 
         $this->assertEquals([
-            'type' => Embed::TYPE_IMAGE,
             'image' => [
                 'url' => $url,
                 'proxy_url' => $proxyUrl,

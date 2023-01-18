@@ -10,10 +10,8 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  * Author Embed
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-author-structure
  */
-class AuthorEmbed extends Embed
+class AuthorEmbed extends EmbedObject
 {
-    use MergesArrays;
-
     protected string $name;
 
     protected ?string $url = null;
@@ -22,11 +20,20 @@ class AuthorEmbed extends Embed
 
     protected ?string $proxyIconUrl = null;
 
-    public function __construct(string $name, ?string $title = null, ?string $description = null, ?string $timestamp = null)
+    /**
+     * @param string $name
+     * @param string|null $url
+     * @param string|null $iconUrl
+     * @param string|null $proxyIconUrl
+     */
+    public function __construct(string $name, ?string $url = null, ?string $iconUrl = null, ?string $proxyIconUrl = null)
     {
-        parent::__construct($title, $description, $timestamp);
         $this->name = $name;
+        $this->url = $url;
+        $this->iconUrl = $iconUrl;
+        $this->proxyIconUrl = $proxyIconUrl;
     }
+
 
     /**
      * URL of author
@@ -67,20 +74,13 @@ class AuthorEmbed extends Embed
         return $this;
     }
 
-    public function getType(): string
-    {
-        return static::TYPE_AUTHOR;
-    }
-
     public function toArray(): array
     {
-        return $this->toMergedArray([
-            'author' => [
-                'name' => $this->name,
-                'url' => $this->url,
-                'icon_url' => $this->iconUrl,
-                'proxy_icon_url' => $this->proxyIconUrl,
-            ],
+        return array_filter([
+            'name' => $this->name,
+            'url' => $this->url,
+            'icon_url' => $this->iconUrl,
+            'proxy_icon_url' => $this->proxyIconUrl,
         ]);
     }
 }

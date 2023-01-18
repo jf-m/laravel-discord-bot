@@ -11,11 +11,18 @@ class VideoEmbedTest extends TestCase
 {
     public function testEmbed()
     {
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
         $url = 'https://example.com';
-        $embed = new VideoEmbed($url);
+        $embed = new Embed($title, $description, $timestamp);
+
+        $embed->withVideo(new VideoEmbed($url));
 
         $this->assertEquals([
-            'type' => Embed::TYPE_VIDEO,
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
             'video' => [
                 'url' => $url,
             ],
@@ -32,15 +39,17 @@ class VideoEmbedTest extends TestCase
         $proxyUrl = 'https://example.com/proxy';
         $height = 256;
         $width = 512;
+        $embed = new Embed($title, $description, $timestamp);
 
-        $embed = new VideoEmbed($url, $title, $description, $timestamp);
 
-        $embed->withProxyUrl($proxyUrl);
-        $embed->withWidth($width);
-        $embed->withHeight($height);
+        $videoEmbed = new VideoEmbed($url, $title);
+
+        $videoEmbed->withProxyUrl($proxyUrl);
+        $videoEmbed->withWidth($width);
+        $videoEmbed->withHeight($height);
+        $embed->withVideo($videoEmbed);
 
         $this->assertEquals([
-            'type' => Embed::TYPE_VIDEO,
             'video' => [
                 'url' => $url,
                 'proxy_url' => $proxyUrl,

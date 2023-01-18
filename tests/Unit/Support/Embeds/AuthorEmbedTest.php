@@ -12,10 +12,17 @@ class AuthorEmbedTest extends TestCase
     public function testEmbed()
     {
         $name = 'test name';
-        $embed = new AuthorEmbed($name);
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
+        $embed = new Embed($title, $description, $timestamp);
+
+        $embed->withAuthor(new AuthorEmbed($name));
 
         $this->assertEquals([
-            'type' => Embed::TYPE_AUTHOR,
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
             'author' => [
                 'name' => $name,
             ],
@@ -32,15 +39,17 @@ class AuthorEmbedTest extends TestCase
         $url = 'https://example.com';
         $iconUrl = 'https://example.com/icon';
         $proxyIconUrl = 'https://example.com/proxy';
+        $embed = new Embed($title, $description, $timestamp);
 
-        $embed = new AuthorEmbed($name, $title, $description, $timestamp);
+        $authorEmbed = new AuthorEmbed($name);
 
-        $embed->withUrl($url);
-        $embed->withIconUrl($iconUrl);
-        $embed->withProxyIconUrl($proxyIconUrl);
+        $authorEmbed->withUrl($url);
+        $authorEmbed->withIconUrl($iconUrl);
+        $authorEmbed->withProxyIconUrl($proxyIconUrl);
+
+        $embed->withAuthor($authorEmbed);
 
         $this->assertEquals([
-            'type' => Embed::TYPE_AUTHOR,
             'author' => [
                 'name' => $name,
                 'url' => $url,
@@ -49,7 +58,7 @@ class AuthorEmbedTest extends TestCase
             ],
             'title' => $title,
             'description' => $description,
-            'timestamp' => $timestamp,
+            'timestamp' => $timestamp
         ], $embed->toArray());
     }
 }

@@ -11,11 +11,20 @@ class FooterEmbedTest extends TestCase
 {
     public function testEmbed()
     {
+        $title = 'test title';
+        $description = 'test description';
+        $timestamp = '12345';
+        $embed = new Embed($title, $description, $timestamp);
+
+
         $text = 'test text';
-        $embed = new FooterEmbed($text);
+        $embed->withFooter(new FooterEmbed($text));
+
 
         $this->assertEquals([
-            'type' => Embed::TYPE_FOOTER,
+            'title' => $title,
+            'description' => $description,
+            'timestamp' => $timestamp,
             'footer' => [
                 'text' => $text,
             ],
@@ -31,15 +40,18 @@ class FooterEmbedTest extends TestCase
 
         $iconUrl = 'https://example.com/proxy';
         $proxyIconUrl = 'https://example.com/proxy';
+        $embed = new Embed($title, $description, $timestamp);
 
-        $embed = new FooterEmbed($text, $title, $description, $timestamp);
+        $footerEmbed = new FooterEmbed($text, $title, $description);
 
-        $embed->withIconUrl($iconUrl);
-        $embed->withProxyIconUrl($proxyIconUrl);
+        $footerEmbed->withIconUrl($iconUrl);
+        $footerEmbed->withProxyIconUrl($proxyIconUrl);
+
         $embed->withColor(12345);
 
+        $embed->withFooter($footerEmbed);
+
         $this->assertEquals([
-            'type' => Embed::TYPE_FOOTER,
             'footer' => [
                 'text' => $text,
                 'icon_url' => $iconUrl,

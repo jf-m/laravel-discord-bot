@@ -10,23 +10,26 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  * Field Embed
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
  */
-class FieldEmbed extends Embed
+class FieldEmbed extends EmbedObject
 {
-    use MergesArrays;
-
     protected string $name;
 
     protected string $value;
 
     protected ?bool $inline = null;
 
-    public function __construct(string $name, string $value, ?string $title = null, ?string $description = null, ?string $timestamp = null)
+    /**
+     * @param string $name
+     * @param string $value
+     * @param bool|null $inline
+     */
+    public function __construct(string $name, string $value, ?bool $inline = null)
     {
-        parent::__construct($title, $description, $timestamp);
-
         $this->name = $name;
         $this->value = $value;
+        $this->inline = $inline;
     }
+
 
     /**
      * Whether this field should display inline
@@ -41,19 +44,12 @@ class FieldEmbed extends Embed
         return $this;
     }
 
-    public function getType(): string
-    {
-        return static::TYPE_FIELD;
-    }
-
     public function toArray(): array
     {
-        return $this->toMergedArray([
-            'field' => [
-                'name' => $this->name,
-                'value' => $this->value,
-                'inline' => $this->inline,
-            ],
-        ]);
+        return array_filter([
+            'name' => $this->name,
+            'value' => $this->value,
+            'inline' => $this->inline,
+        ], fn($v) => $v !== null);
     }
 }
