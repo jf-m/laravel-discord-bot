@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use Mockery\Exception;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Psr\Http\Message\ResponseInterface;
 

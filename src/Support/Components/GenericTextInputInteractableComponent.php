@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-abstract class GenericTextInputComponent extends Component
+abstract class GenericTextInputInteractableComponent extends InteractableComponent
 {
     use FiltersRecursive;
 
@@ -108,7 +109,7 @@ abstract class GenericTextInputComponent extends Component
 
     public function getType(): int
     {
-        return static::TYPE_TEXT_INPUT;
+        return Component::TYPE_TEXT_INPUT;
     }
 
     /**

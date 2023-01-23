@@ -5,7 +5,8 @@ namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\Components\SelectMenuComponent;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Components\SelectMenuInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Objects\SelectOptionObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -23,7 +24,7 @@ class SelectMenuComponentTest extends TestCase
         $option1->shouldReceive('toArray')->andReturn($expectedOption1Array);
         $option2->shouldReceive('toArray')->andReturn($expectedOption2Array);
 
-        $component = $this->getMockBuilder(SelectMenuComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[$option1, $option2]])->getMock();
+        $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[$option1, $option2]])->getMock();
 
         $this->assertArraySubset([
             'type' => Component::TYPE_SELECT_MENU,
@@ -42,7 +43,7 @@ class SelectMenuComponentTest extends TestCase
         $option1->shouldReceive('toArray')->andReturn($expectedOption1Array);
         $option2->shouldReceive('toArray')->andReturn($expectedOption2Array);
 
-        $component = $this->getMockBuilder(SelectMenuComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[$option1, $option2]])->getMock();
+        $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[$option1, $option2]])->getMock();
         $component->withPlaceholder('test placeholder');
         $component->withMinValues(5);
         $component->withMaxValues(10);
@@ -67,7 +68,7 @@ class SelectMenuComponentTest extends TestCase
             ['value' => $selectedOptionTwo, 'label' => $selectedOptionTwo],
         ], 'id' => '1']);
 
-        $component = $this->getMockBuilder(SelectMenuComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[]])->getMock();
+        $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[]])->getMock();
         $component->expects($this->once())
             ->method('onMenuItemsSubmitted')
             ->with([new SelectOptionObject($selectedOptionOne, $selectedOptionOne),new SelectOptionObject($selectedOptionTwo, $selectedOptionTwo)], $interactionRequest);

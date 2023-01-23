@@ -5,15 +5,16 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Objects\SelectOptionObject;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Select Menu Component
+ * Select Menu InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
  */
-abstract class SelectMenuComponent extends Component
+abstract class SelectMenuInteractableComponent extends InteractableComponent
 {
     use MergesArrays;
 
@@ -94,7 +95,7 @@ abstract class SelectMenuComponent extends Component
 
     public function getType(): int
     {
-        return static::TYPE_SELECT_MENU;
+        return Component::TYPE_SELECT_MENU;
     }
 
     public function toArray(): array

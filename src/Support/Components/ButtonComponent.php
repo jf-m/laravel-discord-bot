@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
-use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Action Button Component
+ * Action Button InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#buttons
  */
-abstract class ButtonComponent extends GenericButtonComponent
+abstract class ButtonComponent extends GenericButtonInteractableComponent
 {
     use MergesArrays;
 

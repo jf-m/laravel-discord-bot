@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
-use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonComponent;
+use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Objects\EmojiObject;
@@ -25,7 +26,7 @@ class ButtonComponentTest extends TestCase
 
         $this->assertArraySubset([
             'type' => Component::TYPE_BUTTON,
-            'style' => GenericButtonComponent::STYLE_PRIMARY,
+            'style' => GenericButtonInteractableComponent::STYLE_PRIMARY,
             'label' => $label,
         ], $component->toArray());
     }
@@ -45,7 +46,7 @@ class ButtonComponentTest extends TestCase
 
         $this->assertArraySubset([
             'type' => Component::TYPE_BUTTON,
-            'style' => GenericButtonComponent::STYLE_PRIMARY,
+            'style' => GenericButtonInteractableComponent::STYLE_PRIMARY,
             'label' => $label,
             'disabled' => true,
             'emoji' => $expectedEmojiArray,
@@ -62,16 +63,16 @@ class ButtonComponentTest extends TestCase
         $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
 
         switch ($expectedStyle) {
-            case GenericButtonComponent::STYLE_PRIMARY:
+            case GenericButtonInteractableComponent::STYLE_PRIMARY:
                 $component->withPrimaryStyle();
                 break;
-            case GenericButtonComponent::STYLE_SECONDARY:
+            case GenericButtonInteractableComponent::STYLE_SECONDARY:
                 $component->withSecondaryStyle();
                 break;
-            case GenericButtonComponent::STYLE_SUCCESS:
+            case GenericButtonInteractableComponent::STYLE_SUCCESS:
                 $component->withSuccessStyle();
                 break;
-            case GenericButtonComponent::STYLE_DANGER:
+            case GenericButtonInteractableComponent::STYLE_DANGER:
                 $component->withDangerStyle();
                 break;
         }
@@ -99,10 +100,10 @@ class ButtonComponentTest extends TestCase
     public function withStyleDataProvider(): array
     {
         return [
-            [GenericButtonComponent::STYLE_PRIMARY],
-            [GenericButtonComponent::STYLE_SECONDARY],
-            [GenericButtonComponent::STYLE_SUCCESS],
-            [GenericButtonComponent::STYLE_DANGER],
+            [GenericButtonInteractableComponent::STYLE_PRIMARY],
+            [GenericButtonInteractableComponent::STYLE_SECONDARY],
+            [GenericButtonInteractableComponent::STYLE_SUCCESS],
+            [GenericButtonInteractableComponent::STYLE_DANGER],
         ];
     }
 }

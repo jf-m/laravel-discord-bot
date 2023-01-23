@@ -5,7 +5,8 @@ namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputComponent;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ParagraphTextInputComponent;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -20,7 +21,7 @@ class ParagraphTextInputComponentTest extends TestCase
 
         $this->assertArraySubset([
             'type' => Component::TYPE_TEXT_INPUT,
-            'style' => GenericTextInputComponent::STYLE_PARAGRAPH,
+            'style' => GenericTextInputInteractableComponent::STYLE_PARAGRAPH,
             'label' => $label,
         ], $component->toArray());
     }
@@ -44,7 +45,7 @@ class ParagraphTextInputComponentTest extends TestCase
 
         $this->assertArraySubset([
             'type' => Component::TYPE_TEXT_INPUT,
-            'style' => GenericTextInputComponent::STYLE_PARAGRAPH,
+            'style' => GenericTextInputInteractableComponent::STYLE_PARAGRAPH,
             'label' => $label,
             'min_length' => $minLength,
             'max_length' => $maxLength,

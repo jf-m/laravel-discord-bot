@@ -7,7 +7,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordInteractionServiceContract;
-use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\ApplicationCommandHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
@@ -37,7 +37,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
         $this->laravel = $laravel;
     }
 
-    public function getComponentFromCustomId(string $customId): Component
+    public function getComponentFromCustomId(string $customId): InteractableComponent
     {
         [
             $className,

@@ -6,10 +6,10 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 
 /**
- * Short Text Input Component
+ * Short Text Input InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#text-inputs-text-input-structure
  */
-abstract class ShortTextInputComponent extends GenericTextInputComponent
+abstract class ShortTextInputComponent extends GenericTextInputInteractableComponent
 {
     use MergesArrays;
 

@@ -7,17 +7,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Contracts\Foundation\Application;
-use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class DiscordInteractionHandlerJob implements ShouldQueue
 {
     use Dispatchable, Queueable;
 
-    protected Component $component;
+    protected InteractableComponent $component;
     public ParameterBag $data;
 
-    public function __construct(ParameterBag $interactionRequest, Component $component)
+    public function __construct(ParameterBag $interactionRequest, InteractableComponent $component)
     {
         $this->data = $interactionRequest;
         $this->component = $component;

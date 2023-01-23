@@ -9,7 +9,7 @@ use Nwilging\LaravelDiscordBot\Channels\DiscordNotificationChannel;
 use Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContract;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
-use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 
@@ -62,8 +62,8 @@ class DiscordNotificationChannelTest extends TestCase
         $embed1 = \Mockery::mock(Embed::class);
         $embed2 = \Mockery::mock(Embed::class);
 
-        $component1 = \Mockery::mock(Component::class);
-        $component2 = \Mockery::mock(Component::class);
+        $component1 = \Mockery::mock(InteractableComponent::class);
+        $component2 = \Mockery::mock(InteractableComponent::class);
 
         $discordNotificationMessage = (new DiscordMessage())
             ->channelId('12345')

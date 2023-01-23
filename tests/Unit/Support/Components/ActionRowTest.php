@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ActionRow;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 
@@ -22,8 +23,8 @@ class ActionRowTest extends TestCase
         $expectedComponent1Array = ['k1' => 'v1'];
         $expectedComponent2Array = ['k2' => 'v2'];
 
-        $component1 = \Mockery::mock(Component::class);
-        $component2 = \Mockery::mock(Component::class);
+        $component1 = \Mockery::mock(InteractableComponent::class);
+        $component2 = \Mockery::mock(InteractableComponent::class);
 
         $component1->shouldReceive('toArray')->andReturn($expectedComponent1Array);
         $component2->shouldReceive('toArray')->andReturn($expectedComponent2Array);

@@ -7,10 +7,10 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Link Button Component
+ * Link Button InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#buttons
  */
-class LinkButtonComponent extends GenericButtonComponent
+class LinkButtonComponent extends GenericButtonInteractableComponent
 {
     use MergesArrays;
 

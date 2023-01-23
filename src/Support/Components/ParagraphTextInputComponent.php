@@ -7,10 +7,10 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Paragraph Text Input Component
+ * Paragraph Text Input InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#text-inputs-text-input-structure
  */
-abstract class ParagraphTextInputComponent extends GenericTextInputComponent
+abstract class ParagraphTextInputComponent extends GenericTextInputInteractableComponent
 {
     use MergesArrays;
 

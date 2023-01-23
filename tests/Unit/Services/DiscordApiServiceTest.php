@@ -6,7 +6,7 @@ namespace Nwilging\LaravelDiscordBotTests\Unit\Services;
 use GuzzleHttp\ClientInterface;
 use Mockery\MockInterface;
 use Nwilging\LaravelDiscordBot\Services\DiscordApiService;
-use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -75,8 +75,8 @@ class DiscordApiServiceTest extends TestCase
         $embed1 = \Mockery::mock(Embed::class);
         $embed2 = \Mockery::mock(Embed::class);
 
-        $component1 = \Mockery::mock(Component::class);
-        $component2 = \Mockery::mock(Component::class);
+        $component1 = \Mockery::mock(InteractableComponent::class);
+        $component2 = \Mockery::mock(InteractableComponent::class);
 
         $embed1->shouldReceive('toArray')->andReturn($expectedEmbed1Array);
         $embed2->shouldReceive('toArray')->andReturn($expectedEmbed2Array);

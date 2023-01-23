@@ -5,6 +5,7 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 
 class ActionRow implements Arrayable
 {

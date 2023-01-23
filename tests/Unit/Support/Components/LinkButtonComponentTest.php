@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonComponent;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\LinkButtonComponent;
 use Nwilging\LaravelDiscordBot\Support\Objects\EmojiObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
@@ -20,7 +21,7 @@ class LinkButtonComponentTest extends TestCase
 
         $this->assertEquals([
             'type' => Component::TYPE_BUTTON,
-            'style' => GenericButtonComponent::STYLE_LINK,
+            'style' => GenericButtonInteractableComponent::STYLE_LINK,
             'label' => $label,
             'url' => $url,
             'custom_id' => json_encode([$component::class, null])
@@ -43,7 +44,7 @@ class LinkButtonComponentTest extends TestCase
 
         $this->assertEquals([
             'type' => Component::TYPE_BUTTON,
-            'style' => GenericButtonComponent::STYLE_LINK,
+            'style' => GenericButtonInteractableComponent::STYLE_LINK,
             'label' => $label,
             'disabled' => true,
             'url' => $url,

@@ -5,11 +5,12 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 
 use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasEmojiObject;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-abstract class GenericButtonComponent extends Component
+abstract class GenericButtonInteractableComponent extends InteractableComponent
 {
     use FiltersRecursive, HasEmojiObject;
 
