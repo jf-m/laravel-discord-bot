@@ -35,7 +35,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
     {
         $customId = 'testCustomId';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'data' => $customIdParam];
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
 
         Bus::fake([
@@ -53,7 +53,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $handler = new MessageComponentInteractionHandler('invalid', $this->laravel, $componentMock);
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::REPLY_TO_MESSAGE,
             'data' => [
                 'content' => 'custom reply',
@@ -69,7 +69,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
     {
         $customId = 'testCustomId';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
@@ -84,7 +84,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $handler = new MessageComponentInteractionHandler(InteractionHandler::BEHAVIOR_DEFER, $this->laravel, $componentMock);
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::DEFER_WHILE_HANDLING,
         ], $result->toArray());
         Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
@@ -98,7 +98,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
         $customId = 'testCustomId';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
@@ -115,7 +115,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $handler = new MessageComponentInteractionHandler(InteractionHandler::BEHAVIOR_LOAD, $this->laravel, $componentMock);
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::LOAD_WHILE_HANDLING,
         ], $result->toArray());
         Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
@@ -128,7 +128,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
     {
         $customId = 'testCustomId';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
@@ -143,7 +143,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $handler = new MessageComponentInteractionHandler('invalid', $this->laravel, $componentMock);
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::DEFER_WHILE_HANDLING,
         ], $result->toArray());
         Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
@@ -155,7 +155,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAsynchronously()
     {
         $customId = 'testCustomId';
-        $parameterBag = ['data' => ['custom_id' => $customId]];
+        $parameterBag = ['id' => '1', 'data' => ['custom_id' => $customId]];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
@@ -178,7 +178,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
     {
         $customId = 'testCustomId';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);

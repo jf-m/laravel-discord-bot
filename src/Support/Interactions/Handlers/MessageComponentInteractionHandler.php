@@ -33,12 +33,12 @@ class MessageComponentInteractionHandler extends InteractionHandler
         $requestData = $request->all();
         /** @var ParameterBag $data */
         $data = $requestData['data'] ?? null;
-        if ($data && $customId = $data['custom_id']) {
+        if ($data && $customId = $data['custom_id'] ?? null) {
             $component = $this->discordInteractionService->getComponentFromCustomId($customId);
             if ($component->shouldDispatchSync()) {
-                DiscordInteractionHandlerJob::dispatchSync($request->all(), $component);
+                DiscordInteractionHandlerJob::dispatchSync($requestData, $component);
             } else {
-                DiscordInteractionHandlerJob::dispatch($request->all(), $component);
+                DiscordInteractionHandlerJob::dispatch($requestData, $component);
             }
             if ($response = $component->getDiscordInteractionResponse()) {
                 return $response;
