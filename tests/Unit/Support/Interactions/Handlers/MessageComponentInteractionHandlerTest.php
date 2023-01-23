@@ -15,6 +15,7 @@ use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionReplyResponse;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -45,8 +46,8 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request->shouldReceive('all')->andReturn($parameterBag);
 
 
-        $customButton = $this->createPartialMock(ButtonComponent::class, [ 'onClicked']);
-        $customButton->withReplyBehavior(Component::REPLY_TO_MESSAGE, 'custom reply');
+        $customButton = $this->createPartialMock(ButtonComponent::class, ['getInteractionResponse', 'onClicked']);
+        $customButton->expects($this->once())->method('getInteractionResponse')->willReturn(new DiscordInteractionReplyResponse('custom reply'));
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
         $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
 

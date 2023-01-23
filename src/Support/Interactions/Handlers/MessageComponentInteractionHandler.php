@@ -40,7 +40,7 @@ class MessageComponentInteractionHandler extends InteractionHandler
             } else {
                 DiscordInteractionHandlerJob::dispatch($requestData, $component);
             }
-            if ($response = $component->getDiscordInteractionResponse()) {
+            if ($response = $component->getInteractionResponse($requestData)) {
                 return $response;
             }
 

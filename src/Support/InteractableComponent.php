@@ -15,8 +15,6 @@ abstract class InteractableComponent extends Component
 {
 
     public ?string $parameter = null;
-    protected ?string $replyContent = null;
-    public ?int $replyBehavior = null;
 
     public ?string $interactOnQueue = null;
     public ?string $interactOnConnection = null;
@@ -29,33 +27,12 @@ abstract class InteractableComponent extends Component
         $this->parameter = $parameter;
     }
 
-    /**
-     * Can be:
-     * static::LOAD_WHILE_HANDLING; // Shows a loading message/status while handling
-     * static::REPLY_TO_MESSAGE; // Replies to the interaction with replyContent(). Required if you want to reply to the interaction
-     * static::DEFER_WHILE_HANDLING; // Shows no loading message/status while handling
-     * @param int|null $replyBehavior
-     * @param string|null $replyContent only used when $replyBehavior is REPLY_TO_MESSAGE
-     * @return $this
-     */
-    public function withReplyBehavior(?int $replyBehavior, ?string $replyContent = null): static
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
-        $this->replyBehavior = $replyBehavior;
-        $this->replyContent = $replyContent;
-        return $this;
+        return null;
     }
 
     abstract public function onInteract(array $interactionRequest): void;
-
-    public function getDiscordInteractionResponse(): ?DiscordInteractionResponse
-    {
-        if ($this->replyBehavior !== null) {
-            return new DiscordInteractionResponse($this->replyBehavior, $this->replyContent ? [
-                'content' => $this->replyContent,
-            ] : null);
-        }
-        return null;
-    }
 
     /**
      * @throws \Exception
