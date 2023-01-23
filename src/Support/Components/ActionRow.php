@@ -7,9 +7,8 @@ use Illuminate\Contracts\Support\Arrayable;
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 
-class ActionRow implements Arrayable
+class ActionRow extends Component
 {
-
     protected ?string $content;
 
     /**
@@ -39,11 +38,16 @@ class ActionRow implements Arrayable
         return $this;
     }
 
+    protected function getType()
+    {
+        return Component::TYPE_ACTION_ROW;
+    }
+
     public function toArray(): array
     {
         return array_filter([
             'content' => $this->content,
-            'type' => Component::TYPE_ACTION_ROW,
+            'type' => $this->getType(),
             'components' => array_map(function (Component $component): array {
                 return $component->toArray();
             }, $this->components),
