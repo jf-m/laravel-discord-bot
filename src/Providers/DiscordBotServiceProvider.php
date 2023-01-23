@@ -21,11 +21,15 @@ class DiscordBotServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/discord.php', 'discord');
+        $this->publishes([
+            __DIR__.'/../../config/discord.php' => config_path('discord.php'),
+        ]);
     }
 
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/../../config/discord.php', 'discord');
+
         Notification::resolved(function (ChannelManager $channelManager): void {
             $channelManager->extend('discord', function (): DiscordNotificationChannelContract {
                 return $this->app->make(DiscordNotificationChannelContract::class);

@@ -43,7 +43,11 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
             $className,
             $parameter
         ] = json_decode($customId, flags: \JSON_UNESCAPED_UNICODE);
+        if (!class_exists($className)) {
+            $className = config('discord.interactions.namespace') . $className;
+        }
         $model = new $className();
+
         $model->parameter = $parameter;
 
         return $model;

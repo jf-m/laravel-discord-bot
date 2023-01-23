@@ -13,7 +13,7 @@ abstract class ShortTextInputComponent extends GenericTextInputInteractableCompo
 {
     use MergesArrays;
 
-    public function __construct(string $label, string $parameter = null)
+    public function __construct(string $label, ?string $parameter = null)
     {
         parent::__construct(static::STYLE_SHORT, $label, $parameter);
     }

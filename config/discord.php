@@ -12,6 +12,7 @@ return [
     'application_id' => env('DISCORD_APPLICATION_ID'),
     'public_key' => env('DISCORD_PUBLIC_KEY'),
     'interactions' => [
+        'namespace' => 'App\\',
         'default_queue' => null,
         'default_connection' => null,
         'component_interaction_default_behavior' => (in_array(

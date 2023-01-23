@@ -40,6 +40,7 @@ abstract class InteractableComponent extends Component
     protected function getCustomId(): string
     {
         $className = get_class($this);
+        $className = str_replace(config('discord.interactions.namespace'), '', $className);
         $c = json_encode([
             $className,
             $this->parameter

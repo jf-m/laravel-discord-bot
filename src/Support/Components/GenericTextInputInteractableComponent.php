@@ -29,7 +29,7 @@ abstract class GenericTextInputInteractableComponent extends InteractableCompone
 
     protected ?string $placeholder = null;
 
-    public function __construct(int $style, string $label, string $parameter = null)
+    public function __construct(int $style, string $label, ?string $parameter = null)
     {
         parent::__construct($parameter);
 
