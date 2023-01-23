@@ -22,7 +22,7 @@ class LinkButtonComponent extends GenericButtonInteractableComponent
         $this->url = $url;
     }
 
-    public function onClicked(ParameterBag $interactionRequest): void
+    public function onClicked(array $interactionRequest): void
     {
 
     }

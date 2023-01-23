@@ -87,7 +87,7 @@ class ButtonComponentTest extends TestCase
     public function testComponentInteraction()
     {
         $label = 'test label';
-        $interactionRequest = new ParameterBag(['id' => '1']);
+        $interactionRequest = ['data' => ['id' => '1']];
 
         $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
         $component->expects($this->once())

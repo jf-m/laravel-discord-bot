@@ -133,10 +133,10 @@ abstract class GenericTextInputInteractableComponent extends InteractableCompone
         ]);
     }
 
-    final public function onInteract(ParameterBag $interactionRequest): void
+    final public function onInteract(array $interactionRequest): void
     {
-        $this->onTextSubmitted($interactionRequest->get('value'), $interactionRequest);
+        $this->onTextSubmitted($interactionRequest['data']['value'], $interactionRequest);
     }
 
-    abstract public function onTextSubmitted(?string $text, ParameterBag $interactionRequest): void;
+    abstract public function onTextSubmitted(?string $text, array $interactionRequest): void;
 }

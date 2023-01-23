@@ -63,10 +63,10 @@ abstract class GenericButtonInteractableComponent extends InteractableComponent
         ]));
     }
 
-    final public function onInteract(ParameterBag $interactionRequest): void
+    final public function onInteract(array $interactionRequest): void
     {
         $this->onClicked($interactionRequest);
     }
 
-    abstract public function onClicked(ParameterBag $interactionRequest): void;
+    abstract public function onClicked(array $interactionRequest): void;
 }

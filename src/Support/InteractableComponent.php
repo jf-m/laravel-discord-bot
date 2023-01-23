@@ -45,7 +45,7 @@ abstract class InteractableComponent extends Component
         return $this;
     }
 
-    abstract public function onInteract(ParameterBag $interactionRequest): void;
+    abstract public function onInteract(array $interactionRequest): void;
 
     public function getDiscordInteractionResponse(): ?DiscordInteractionResponse
     {

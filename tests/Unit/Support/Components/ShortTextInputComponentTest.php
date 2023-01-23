@@ -57,7 +57,7 @@ class ShortTextInputComponentTest extends TestCase
     {
         $label = 'test label';
         $value = 'test';
-        $interactionRequest = new ParameterBag(['value' => $value, 'id' => '1']);
+        $interactionRequest = ['data' => ['value' => $value, 'id' => '1']];
 
         $component = $this->getMockBuilder(ShortTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label, $value])->getMock();
         $component->expects($this->once())

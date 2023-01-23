@@ -111,9 +111,9 @@ abstract class SelectMenuInteractableComponent extends InteractableComponent
         ]);
     }
 
-    final public function onInteract(ParameterBag $interactionRequest): void
+    final public function onInteract(array $interactionRequest): void
     {
-        $components = $interactionRequest->get('components');
+        $components = $interactionRequest['data']['components'];
         $submittedComponents = [];
         foreach ($components as $component) {
             $submittedComponents[] = new SelectOptionObject($component['label'], $component['value']);
@@ -125,5 +125,5 @@ abstract class SelectMenuInteractableComponent extends InteractableComponent
      * @param array<SelectOptionObject> $submittedComponents
      * @return void
      */
-    abstract public function onMenuItemsSubmitted(array $submittedComponents, ParameterBag $interactionRequest): void;
+    abstract public function onMenuItemsSubmitted(array $submittedComponents, array $interactionRequest): void;
 }

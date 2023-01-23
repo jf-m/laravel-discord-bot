@@ -34,18 +34,15 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAndReturnsCustomResponse()
     {
         $customId = 'testCustomId';
-        $customIdParam = new ParameterBag(['custom_id' => $customId]);
-        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $customIdParam = ['custom_id' => $customId];
+        $parameterBag = ['data' => $customIdParam];
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
         ]);
         $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('json')->andReturn($parameterBag);
-        $request->shouldReceive('get')
-            ->with('data', null)
-            ->andReturn($parameterBag->get('data'));
+        $request->shouldReceive('all')->andReturn($parameterBag);
 
 
         $customButton = $this->createPartialMock(ButtonComponent::class, [ 'onClicked']);
@@ -62,8 +59,8 @@ class MessageComponentInteractionHandlerTest extends TestCase
                 'content' => 'custom reply',
             ],
         ], $result->toArray());
-        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
-            $this->assertSame($customIdParam, $job->data);
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
+            $this->assertSame($parameterBag, $job->data);
             return true;
         });
     }
@@ -71,14 +68,11 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAndReturnsDefaultBehaviorResponse()
     {
         $customId = 'testCustomId';
-        $customIdParam = new ParameterBag(['custom_id' => $customId]);
-        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $customIdParam = ['custom_id' => $customId];
+        $parameterBag = ['data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('json')->andReturn($parameterBag);
-        $request->shouldReceive('get')
-            ->with('data', null)
-            ->andReturn($parameterBag->get('data'));
+        $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
@@ -93,8 +87,8 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $this->assertEquals([
             'type' => Component::DEFER_WHILE_HANDLING,
         ], $result->toArray());
-        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
-            $this->assertSame($customIdParam, $job->data);
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
+            $this->assertSame($parameterBag, $job->data);
             return true;
         });
     }
@@ -103,14 +97,11 @@ class MessageComponentInteractionHandlerTest extends TestCase
     {
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
         $customId = 'testCustomId';
-        $customIdParam = new ParameterBag(['custom_id' => $customId]);
-        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $customIdParam = ['custom_id' => $customId];
+        $parameterBag = ['data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('json')->andReturn($parameterBag);
-        $request->shouldReceive('get')
-            ->with('data', null)
-            ->andReturn($parameterBag->get('data'));
+        $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
 
@@ -127,8 +118,8 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $this->assertEquals([
             'type' => Component::LOAD_WHILE_HANDLING,
         ], $result->toArray());
-        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
-            $this->assertSame($customIdParam, $job->data);
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
+            $this->assertSame($parameterBag, $job->data);
             return true;
         });
     }
@@ -136,14 +127,11 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAndReturnsDeferWhenNoValidDefaultBehavior()
     {
         $customId = 'testCustomId';
-        $customIdParam = new ParameterBag(['custom_id' => $customId]);
-        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $customIdParam = ['custom_id' => $customId];
+        $parameterBag = ['data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('json')->andReturn($parameterBag);
-        $request->shouldReceive('get')
-            ->with('data', null)
-            ->andReturn($parameterBag->get('data'));
+        $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
@@ -158,8 +146,8 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $this->assertEquals([
             'type' => Component::DEFER_WHILE_HANDLING,
         ], $result->toArray());
-        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
-            $this->assertSame($customIdParam, $job->data);
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
+            $this->assertSame($parameterBag, $job->data);
             return true;
         });
     }
@@ -167,11 +155,10 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAsynchronously()
     {
         $customId = 'testCustomId';
-        $customIdParam = new ParameterBag(['custom_id' => $customId]);
-        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $parameterBag = ['data' => ['custom_id' => $customId]];
 
         $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('get')->with('data', null)->andReturn($parameterBag->get('data'));
+        $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked', 'shouldDispatchSync'])->setConstructorArgs([''])->getMock();
         $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(false);
@@ -190,11 +177,11 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobSynchronously()
     {
         $customId = 'testCustomId';
-        $customIdParam = new ParameterBag(['custom_id' => $customId]);
-        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $customIdParam = ['custom_id' => $customId];
+        $parameterBag = ['data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('get')->with('data', null)->andReturn($parameterBag->get('data'));
+        $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked', 'shouldDispatchSync'])->setConstructorArgs([''])->getMock();
         $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(true);

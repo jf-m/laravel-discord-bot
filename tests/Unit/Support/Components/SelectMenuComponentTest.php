@@ -63,10 +63,10 @@ class SelectMenuComponentTest extends TestCase
     {
         $selectedOptionOne = '1';
         $selectedOptionTwo = '5';
-        $interactionRequest = new ParameterBag(['components' => [
+        $interactionRequest = ['data' => ['components' => [
             ['value' => $selectedOptionOne, 'label' => $selectedOptionOne],
             ['value' => $selectedOptionTwo, 'label' => $selectedOptionTwo],
-        ], 'id' => '1']);
+        ], 'id' => '1']];
 
         $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[]])->getMock();
         $component->expects($this->once())

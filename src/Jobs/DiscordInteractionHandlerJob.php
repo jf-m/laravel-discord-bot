@@ -15,9 +15,9 @@ class DiscordInteractionHandlerJob implements ShouldQueue
     use Dispatchable, Queueable;
 
     protected InteractableComponent $component;
-    public ParameterBag $data;
+    public array $data;
 
-    public function __construct(ParameterBag $interactionRequest, InteractableComponent $component)
+    public function __construct(array $interactionRequest, InteractableComponent $component)
     {
         $this->data = $interactionRequest;
         $this->component = $component;
