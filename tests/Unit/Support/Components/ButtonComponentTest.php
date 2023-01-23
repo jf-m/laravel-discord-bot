@@ -3,48 +3,50 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
+use Illuminate\Http\Request;
+use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
+use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonComponent;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
+use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Objects\EmojiObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ButtonComponentTest extends TestCase
 {
     public function testComponent()
     {
         $label = 'test label';
-        $customId = 'custom-id';
 
-        $component = new ButtonComponent($label, $customId);
+        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
 
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::TYPE_BUTTON,
             'style' => GenericButtonComponent::STYLE_PRIMARY,
             'label' => $label,
-            'custom_id' => $customId,
         ], $component->toArray());
     }
 
     public function testComponentWithOptions()
     {
         $label = 'test label';
-        $customId = 'custom-id';
 
         $expectedEmojiArray = ['key' => 'value'];
 
         $emoji = \Mockery::mock(EmojiObject::class);
         $emoji->shouldReceive('toArray')->andReturn($expectedEmojiArray);
 
-        $component = new ButtonComponent($label, $customId);
+        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
         $component->withEmoji($emoji);
         $component->disabled();
 
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::TYPE_BUTTON,
             'style' => GenericButtonComponent::STYLE_PRIMARY,
             'label' => $label,
-            'custom_id' => $customId,
             'disabled' => true,
             'emoji' => $expectedEmojiArray,
         ], $component->toArray());
@@ -56,9 +58,8 @@ class ButtonComponentTest extends TestCase
     public function testComponentWithStyle(int $expectedStyle)
     {
         $label = 'test label';
-        $customId = 'custom-id';
 
-        $component = new ButtonComponent($label, $customId);
+        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
 
         switch ($expectedStyle) {
             case GenericButtonComponent::STYLE_PRIMARY:
@@ -75,12 +76,24 @@ class ButtonComponentTest extends TestCase
                 break;
         }
 
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::TYPE_BUTTON,
             'style' => $expectedStyle,
             'label' => $label,
-            'custom_id' => $customId,
         ], $component->toArray());
+    }
+
+    public function testComponentInteraction()
+    {
+        $label = 'test label';
+        $interactionRequest = new ParameterBag(['id' => '1']);
+
+        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
+        $component->expects($this->once())
+            ->method('onClicked')
+            ->with($interactionRequest);
+        $job = new DiscordInteractionHandlerJob($interactionRequest, $component);
+        $job->handle();
     }
 
     public function withStyleDataProvider(): array

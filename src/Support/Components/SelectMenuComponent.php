@@ -3,15 +3,17 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
+
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Objects\SelectOptionObject;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Select Menu Component
  * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
  */
-class SelectMenuComponent extends Component
+abstract class SelectMenuComponent extends Component
 {
     use MergesArrays;
 
@@ -28,9 +30,13 @@ class SelectMenuComponent extends Component
 
     protected ?bool $disabled = null;
 
-    public function __construct(string $customId, array $options)
+    /**
+     * @param SelectOptionObject[] $options
+     * @param string|null $parameter
+     */
+    public function __construct(array $options, ?string $parameter = null)
     {
-        parent::__construct($customId);
+        parent::__construct($parameter);
         $this->options = $options;
     }
 
@@ -103,4 +109,20 @@ class SelectMenuComponent extends Component
             'disabled' => $this->disabled,
         ]);
     }
+
+    final public function onInteract(ParameterBag $interactionRequest): void
+    {
+        $components = $interactionRequest->get('components');
+        $submittedComponents = [];
+        foreach ($components as $component) {
+            $submittedComponents[] = new SelectOptionObject($component['label'], $component['value']);
+        }
+        $this->onMenuItemsSubmitted($submittedComponents, $interactionRequest);
+    }
+
+    /**
+     * @param array<SelectOptionObject> $submittedComponents
+     * @return void
+     */
+    abstract public function onMenuItemsSubmitted(array $submittedComponents, ParameterBag $interactionRequest): void;
 }

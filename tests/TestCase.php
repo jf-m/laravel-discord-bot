@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBotTests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
 
-class TestCase extends BaseTestCase
+class TestCase extends \Orchestra\Testbench\TestCase
 {
     public function tearDown(): void
     {
@@ -18,5 +17,12 @@ class TestCase extends BaseTestCase
         }
 
         parent::tearDown();
+    }
+
+    public function assertArraySubset($expectedArraySubset, $actualArray): void
+    {
+        foreach ($expectedArraySubset as $expectedKey => $expectedValue) {
+            $this->assertEquals($expectedValue, $actualArray[$expectedKey]);
+        }
     }
 }

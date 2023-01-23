@@ -3,14 +3,17 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Interactions\Handlers;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Mockery\MockInterface;
-use Nwilging\LaravelDiscordBot\Contracts\Listeners\MessageComponentInteractionEventListenerContract;
-use Nwilging\LaravelDiscordBot\Events\MessageComponentInteractionEvent;
+use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
+use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
+use Nwilging\LaravelDiscordBot\Support\Component;
+use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
+use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
+use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -18,175 +21,191 @@ class MessageComponentInteractionHandlerTest extends TestCase
 {
     protected string $defaultBehavior = 'defer';
 
-    protected MockInterface $eventDispatcher;
-
     protected MockInterface $laravel;
-
-    protected MessageComponentInteractionHandler $handler;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->eventDispatcher = \Mockery::mock(Dispatcher::class);
         $this->laravel = \Mockery::mock(Application::class);
-
-        $this->handler = new MessageComponentInteractionHandler($this->defaultBehavior, $this->eventDispatcher, $this->laravel);
     }
 
-    public function testHandleDispatchesToApplicationListenersAndReturnsCustomResponse()
+    public function testHandleDispatchesToJobAndReturnsCustomResponse()
     {
-        $parameterBag = \Mockery::mock(ParameterBag::class);
+        $customId = 'testCustomId';
+        $customIdParam = new ParameterBag(['custom_id' => $customId]);
+        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
 
+        Bus::fake([
+            DiscordInteractionHandlerJob::class
+        ]);
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('json')->andReturn($parameterBag);
+        $request->shouldReceive('get')
+            ->with('data', null)
+            ->andReturn($parameterBag->get('data'));
 
-        $listener1Class = 'test-listener-1';
-        $listener2Class = 'test-listener-2';
 
-        $listener1 = function () {
-            static $listener = 'test-listener-1';
-        };
+        $customButton = $this->createPartialMock(ButtonComponent::class, [ 'onClicked']);
+        $customButton->withReplyBehavior(Component::REPLY_TO_MESSAGE, 'custom reply');
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
 
-        $listener2 = function () {
-            static $listener = 'test-listener-2';
-        };
-
-        $randomAppListener = \Mockery::mock(ShouldQueue::class);
-        $customResponseListener = \Mockery::mock(MessageComponentInteractionEventListenerContract::class);
-
-        $this->eventDispatcher->shouldReceive('getListeners')
-            ->once()
-            ->with(MessageComponentInteractionEvent::class)
-            ->andReturn([$listener1, $listener2]);
-
-        $this->laravel->shouldReceive('make')->once()->with($listener1Class)->andReturn($randomAppListener);
-        $this->laravel->shouldReceive('make')->twice()->with($listener2Class)->andReturn($customResponseListener);
-
-        $this->eventDispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with(\Mockery::on(function (MessageComponentInteractionEvent $event) use ($parameterBag): bool {
-                $this->assertSame($parameterBag, $event->getInteractionRequest());
-                return true;
-            }));
-
-        $customResponseListener->shouldReceive('replyContent')->once()->andReturn('custom reply');
-        $customResponseListener->shouldReceive('behavior')->once()->andReturn(MessageComponentInteractionEventListenerContract::REPLY_TO_MESSAGE);
-
-        $result = $this->handler->handle($request);
+        $handler = new MessageComponentInteractionHandler('invalid', $this->laravel, $componentMock);
+        $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertEquals([
-            'type' => MessageComponentInteractionEventListenerContract::REPLY_TO_MESSAGE,
+            'type' => Component::REPLY_TO_MESSAGE,
             'data' => [
                 'content' => 'custom reply',
             ],
         ], $result->toArray());
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
+            $this->assertSame($customIdParam, $job->data);
+            return true;
+        });
     }
 
-    public function testHandleDispatchesToListenersAndReturnsDefaultBehaviorResponse()
+    public function testHandleDispatchesToJobAndReturnsDefaultBehaviorResponse()
     {
-        $parameterBag = \Mockery::mock(ParameterBag::class);
+        $customId = 'testCustomId';
+        $customIdParam = new ParameterBag(['custom_id' => $customId]);
+        $parameterBag = new ParameterBag(['data' => $customIdParam]);
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('json')->andReturn($parameterBag);
+        $request->shouldReceive('get')
+            ->with('data', null)
+            ->andReturn($parameterBag->get('data'));
 
-        $listener1Class = 'test-listener-1';
+        $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
 
-        $listener1 = function () {
-            static $listener = 'test-listener-1';
-        };
-
-        $randomAppListener = \Mockery::mock(ShouldQueue::class);
-
-        $this->eventDispatcher->shouldReceive('getListeners')
-            ->once()
-            ->with(MessageComponentInteractionEvent::class)
-            ->andReturn([$listener1]);
-
-        $this->laravel->shouldReceive('make')->once()->with($listener1Class)->andReturn($randomAppListener);
-        $this->eventDispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with(\Mockery::on(function (MessageComponentInteractionEvent $event) use ($parameterBag): bool {
-                $this->assertSame($parameterBag, $event->getInteractionRequest());
-                return true;
-            }));
-
-        $result = $this->handler->handle($request);
-        $this->assertEquals(200, $result->getStatus());
-        $this->assertEquals([
-            'type' => MessageComponentInteractionEventListenerContract::DEFER_WHILE_HANDLING,
-        ], $result->toArray());
-    }
-
-    public function testHandleDispatchesToListenersAndReturnsDefaultBehaviorResponseLoad()
-    {
-        $parameterBag = \Mockery::mock(ParameterBag::class);
-
-        $request = \Mockery::mock(Request::class);
-        $request->shouldReceive('json')->andReturn($parameterBag);
-
-        $listener1Class = 'test-listener-1';
-
-        $listener1 = function () {
-            static $listener = 'test-listener-1';
-        };
-
-        $randomAppListener = \Mockery::mock(ShouldQueue::class);
-
-        $this->eventDispatcher->shouldReceive('getListeners')
-            ->once()
-            ->with(MessageComponentInteractionEvent::class)
-            ->andReturn([$listener1]);
-
-        $this->laravel->shouldReceive('make')->once()->with($listener1Class)->andReturn($randomAppListener);
-        $this->eventDispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with(\Mockery::on(function (MessageComponentInteractionEvent $event) use ($parameterBag): bool {
-                $this->assertSame($parameterBag, $event->getInteractionRequest());
-                return true;
-            }));
-
-        $handler = new MessageComponentInteractionHandler('load', $this->eventDispatcher, $this->laravel);
+        Bus::fake([
+            DiscordInteractionHandlerJob::class
+        ]);
+        $handler = new MessageComponentInteractionHandler(InteractionHandler::BEHAVIOR_DEFER, $this->laravel, $componentMock);
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertEquals([
-            'type' => MessageComponentInteractionEventListenerContract::LOAD_WHILE_HANDLING,
+            'type' => Component::DEFER_WHILE_HANDLING,
         ], $result->toArray());
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
+            $this->assertSame($customIdParam, $job->data);
+            return true;
+        });
     }
 
-    public function testHandleDispatchesToListenersAndReturnsDeferWhenNoValidDefaultBehavior()
+    public function testHandleDispatchesToJobAndReturnsDefaultBehaviorResponseLoad()
     {
-        $parameterBag = \Mockery::mock(ParameterBag::class);
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
+        $customId = 'testCustomId';
+        $customIdParam = new ParameterBag(['custom_id' => $customId]);
+        $parameterBag = new ParameterBag(['data' => $customIdParam]);
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('json')->andReturn($parameterBag);
+        $request->shouldReceive('get')
+            ->with('data', null)
+            ->andReturn($parameterBag->get('data'));
 
-        $listener1Class = 'test-listener-1';
+        $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
 
-        $listener1 = function () {
-            static $listener = 'test-listener-1';
-        };
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
 
-        $randomAppListener = \Mockery::mock(ShouldQueue::class);
+        $job = \Mockery::mock(DiscordInteractionHandlerJob::class);
+        Bus::fake([
+            DiscordInteractionHandlerJob::class
+        ]);
 
-        $this->eventDispatcher->shouldReceive('getListeners')
-            ->once()
-            ->with(MessageComponentInteractionEvent::class)
-            ->andReturn([$listener1]);
-
-        $this->laravel->shouldReceive('make')->once()->with($listener1Class)->andReturn($randomAppListener);
-        $this->eventDispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with(\Mockery::on(function (MessageComponentInteractionEvent $event) use ($parameterBag): bool {
-                $this->assertSame($parameterBag, $event->getInteractionRequest());
-                return true;
-            }));
-
-        $handler = new MessageComponentInteractionHandler('invalid', $this->eventDispatcher, $this->laravel);
+        $handler = new MessageComponentInteractionHandler(InteractionHandler::BEHAVIOR_LOAD, $this->laravel, $componentMock);
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertEquals([
-            'type' => MessageComponentInteractionEventListenerContract::DEFER_WHILE_HANDLING,
+            'type' => Component::LOAD_WHILE_HANDLING,
         ], $result->toArray());
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
+            $this->assertSame($customIdParam, $job->data);
+            return true;
+        });
+    }
+
+    public function testHandleDispatchesToJobAndReturnsDeferWhenNoValidDefaultBehavior()
+    {
+        $customId = 'testCustomId';
+        $customIdParam = new ParameterBag(['custom_id' => $customId]);
+        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+
+        $request = \Mockery::mock(Request::class);
+        $request->shouldReceive('json')->andReturn($parameterBag);
+        $request->shouldReceive('get')
+            ->with('data', null)
+            ->andReturn($parameterBag->get('data'));
+
+        $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+
+        Bus::fake([
+            DiscordInteractionHandlerJob::class
+        ]);
+        $handler = new MessageComponentInteractionHandler('invalid', $this->laravel, $componentMock);
+        $result = $handler->handle($request);
+        $this->assertEquals(200, $result->getStatus());
+        $this->assertEquals([
+            'type' => Component::DEFER_WHILE_HANDLING,
+        ], $result->toArray());
+        Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($customIdParam): bool {
+            $this->assertSame($customIdParam, $job->data);
+            return true;
+        });
+    }
+
+    public function testHandleDispatchesToJobAsynchronously()
+    {
+        $customId = 'testCustomId';
+        $customIdParam = new ParameterBag(['custom_id' => $customId]);
+        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+
+        $request = \Mockery::mock(Request::class);
+        $request->shouldReceive('get')->with('data', null)->andReturn($parameterBag->get('data'));
+
+        $customButton = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked', 'shouldDispatchSync'])->setConstructorArgs([''])->getMock();
+        $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(false);
+
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+
+        Bus::fake([
+            DiscordInteractionHandlerJob::class
+        ]);
+        $handler = new MessageComponentInteractionHandler(InteractionHandler::BEHAVIOR_DEFER, $this->laravel, $componentMock);
+        $result = $handler->handle($request);
+        Bus::assertNotDispatchedSync(DiscordInteractionHandlerJob::class);
+    }
+
+    public function testHandleDispatchesToJobSynchronously()
+    {
+        $customId = 'testCustomId';
+        $customIdParam = new ParameterBag(['custom_id' => $customId]);
+        $parameterBag = new ParameterBag(['data' => $customIdParam]);
+
+        $request = \Mockery::mock(Request::class);
+        $request->shouldReceive('get')->with('data', null)->andReturn($parameterBag->get('data'));
+
+        $customButton = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked', 'shouldDispatchSync'])->setConstructorArgs([''])->getMock();
+        $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(true);
+
+        $componentMock = \Mockery::mock(DiscordInteractionService::class);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+
+        Bus::fake([
+            DiscordInteractionHandlerJob::class
+        ]);
+        $handler = new MessageComponentInteractionHandler(InteractionHandler::BEHAVIOR_DEFER, $this->laravel, $componentMock);
+        $result = $handler->handle($request);
+        Bus::assertDispatchedSync(DiscordInteractionHandlerJob::class);
     }
 }

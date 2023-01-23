@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
 
-class ActionRow extends Component
+class ActionRow implements Arrayable
 {
-    use MergesArrays;
+
+    protected ?string $content;
 
     /**
      * @var Component[]
@@ -17,27 +18,31 @@ class ActionRow extends Component
 
     /**
      * @param Component[] $components
+     * @param ?string $content
      */
-    public function __construct(array $components)
+    public function __construct(array $components = [], ?string $content = null)
     {
-        parent::__construct();
         $this->components = $components;
+        $this->content = $content;
     }
 
-    public function addComponent(Component $component): self
+    public function content(?string $content): static
+    {
+        $this->content = $content;
+        return $this;
+    }
+
+    public function addComponent(Component $component): static
     {
         $this->components[] = $component;
         return $this;
     }
 
-    public function getType(): int
-    {
-        return static::TYPE_ACTION_ROW;
-    }
-
     public function toArray(): array
     {
-        return $this->toMergedArray([
+        return array_filter([
+            'content' => $this->content,
+            'type' => Component::TYPE_ACTION_ROW,
             'components' => array_map(function (Component $component): array {
                 return $component->toArray();
             }, $this->components),

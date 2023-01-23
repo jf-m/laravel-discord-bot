@@ -5,18 +5,19 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Action Button Component
  * @see https://discord.com/developers/docs/interactions/message-components#buttons
  */
-class ButtonComponent extends GenericButtonComponent
+abstract class ButtonComponent extends GenericButtonComponent
 {
     use MergesArrays;
 
-    public function __construct(string $label, string $customId)
+    public function __construct(string $label, ?string $parameter = null)
     {
-        parent::__construct(static::STYLE_PRIMARY, $label, $customId);
+        parent::__construct(static::STYLE_PRIMARY, $label, $parameter);
     }
 
     /**
@@ -25,7 +26,7 @@ class ButtonComponent extends GenericButtonComponent
      * @see https://discord.com/developers/docs/interactions/message-components#button-object-button-styles
      * @return $this
      */
-    public function withPrimaryStyle(): self
+    public function withPrimaryStyle(): static
     {
         $this->style = static::STYLE_PRIMARY;
         return $this;
@@ -37,7 +38,7 @@ class ButtonComponent extends GenericButtonComponent
      * @see https://discord.com/developers/docs/interactions/message-components#button-object-button-styles
      * @return $this
      */
-    public function withSecondaryStyle(): self
+    public function withSecondaryStyle(): static
     {
         $this->style = static::STYLE_SECONDARY;
         return $this;
@@ -49,7 +50,7 @@ class ButtonComponent extends GenericButtonComponent
      * @see https://discord.com/developers/docs/interactions/message-components#button-object-button-styles
      * @return $this
      */
-    public function withSuccessStyle(): self
+    public function withSuccessStyle(): static
     {
         $this->style = static::STYLE_SUCCESS;
         return $this;
@@ -61,7 +62,7 @@ class ButtonComponent extends GenericButtonComponent
      * @see https://discord.com/developers/docs/interactions/message-components#button-object-button-styles
      * @return $this
      */
-    public function withDangerStyle(): self
+    public function withDangerStyle(): static
     {
         $this->style = static::STYLE_DANGER;
         return $this;

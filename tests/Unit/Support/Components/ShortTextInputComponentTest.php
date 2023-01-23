@@ -3,24 +3,23 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
+use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ShortTextInputComponent;
 use Nwilging\LaravelDiscordBotTests\TestCase;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ShortTextInputComponentTest extends TestCase
 {
     public function testComponent()
     {
         $label = 'label';
-        $customId = 'custom-id';
+        $component = $this->getMockBuilder(ShortTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label])->getMock();
 
-        $component = new ShortTextInputComponent($label, $customId);
-
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::TYPE_TEXT_INPUT,
             'style' => GenericTextInputComponent::STYLE_SHORT,
-            'custom_id' => $customId,
             'label' => $label,
         ], $component->toArray());
     }
@@ -28,25 +27,22 @@ class ShortTextInputComponentTest extends TestCase
     public function testComponentWithOptions()
     {
         $label = 'label';
-        $customId = 'custom-id';
 
         $minLength = 5;
         $maxLength = 10;
         $placeholder = 'test placeholder';
         $value = 'test value';
 
-        $component = new ShortTextInputComponent($label, $customId);
-
+        $component = $this->getMockBuilder(ShortTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label])->getMock();
         $component->withPlaceholder($placeholder);
         $component->withMinLength($minLength);
         $component->withMaxLength($maxLength);
         $component->withValue($value);
         $component->required();
 
-        $this->assertEquals([
+        $this->assertArraySubset([
             'type' => Component::TYPE_TEXT_INPUT,
             'style' => GenericTextInputComponent::STYLE_SHORT,
-            'custom_id' => $customId,
             'label' => $label,
             'min_length' => $minLength,
             'max_length' => $maxLength,
@@ -54,5 +50,19 @@ class ShortTextInputComponentTest extends TestCase
             'value' => $value,
             'required' => true,
         ], $component->toArray());
+    }
+
+    public function testComponentInteraction()
+    {
+        $label = 'test label';
+        $value = 'test';
+        $interactionRequest = new ParameterBag(['value' => $value, 'id' => '1']);
+
+        $component = $this->getMockBuilder(ShortTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label, $value])->getMock();
+        $component->expects($this->once())
+            ->method('onTextSubmitted')
+            ->with($value, $interactionRequest);
+        $job = new DiscordInteractionHandlerJob($interactionRequest, $component);
+        $job->handle();
     }
 }

@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
+
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasEmojiObject;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class GenericButtonComponent extends Component
 {
@@ -23,12 +25,17 @@ abstract class GenericButtonComponent extends Component
 
     protected ?bool $disabled = null;
 
-    public function __construct(int $style, string $label, ?string $customId = null)
+    public function __construct(int $style, string $label, ?string $parameter = null)
     {
-        parent::__construct($customId);
+        parent::__construct($parameter);
 
         $this->style = $style;
         $this->label = $label;
+    }
+
+    protected function getType(): int
+    {
+        return Component::TYPE_BUTTON;
     }
 
     /**
@@ -44,19 +51,21 @@ abstract class GenericButtonComponent extends Component
         return $this;
     }
 
-    public function getType(): int
-    {
-        return static::TYPE_BUTTON;
-    }
-
     public function toArray(): array
     {
         return $this->arrayFilterRecursive($this->mergeEmojiObject([
-            'type' => $this->getType(),
             'custom_id' => $this->getCustomId(),
+            'type' => $this->getType(),
             'style' => $this->style,
             'label' => $this->label,
             'disabled' => $this->disabled,
         ]));
     }
+
+    final public function onInteract(ParameterBag $interactionRequest): void
+    {
+        $this->onClicked($interactionRequest);
+    }
+
+    abstract public function onClicked(ParameterBag $interactionRequest): void;
 }

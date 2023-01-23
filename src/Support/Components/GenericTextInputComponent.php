@@ -5,6 +5,7 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Support\Component;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class GenericTextInputComponent extends Component
 {
@@ -27,12 +28,17 @@ abstract class GenericTextInputComponent extends Component
 
     protected ?string $placeholder = null;
 
-    public function __construct(int $style, string $label, string $customId = null)
+    public function __construct(int $style, string $label, string $parameter = null)
     {
-        parent::__construct($customId);
+        parent::__construct($parameter);
 
         $this->style = $style;
         $this->label = $label;
+    }
+
+    public function label(string $label): static {
+        $this->label = $label;
+        return $this;
     }
 
     /**
@@ -125,4 +131,11 @@ abstract class GenericTextInputComponent extends Component
             'placeholder' => $this->placeholder,
         ]);
     }
+
+    final public function onInteract(ParameterBag $interactionRequest): void
+    {
+        $this->onTextSubmitted($interactionRequest->get('value'), $interactionRequest);
+    }
+
+    abstract public function onTextSubmitted(?string $text, ParameterBag $interactionRequest): void;
 }

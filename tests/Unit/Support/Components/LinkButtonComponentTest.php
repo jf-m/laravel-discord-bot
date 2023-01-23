@@ -23,6 +23,7 @@ class LinkButtonComponentTest extends TestCase
             'style' => GenericButtonComponent::STYLE_LINK,
             'label' => $label,
             'url' => $url,
+            'custom_id' => json_encode([$component::class, null])
         ], $component->toArray());
     }
 
@@ -47,6 +48,7 @@ class LinkButtonComponentTest extends TestCase
             'disabled' => true,
             'url' => $url,
             'emoji' => $expectedEmojiArray,
+            'custom_id' => json_encode([$component::class, null])
         ], $component->toArray());
     }
 }
