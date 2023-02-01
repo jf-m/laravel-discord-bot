@@ -10,6 +10,7 @@ abstract class InteractionHandler
     public const REQUEST_TYPE_PING = 1;
     public const REQUEST_TYPE_APPLICATION_COMMAND = 2;
     public const REQUEST_TYPE_MESSAGE_COMPONENT = 3;
+    public const REQUEST_TYPE_MODAL_SUBMIT = 5;
 
     public const RESPONSE_TYPE_PONG = 1;
     public const RESPONSE_TYPE_CHANNEL_MESSAGE_WITH_SOURCE = 4;

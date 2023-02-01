@@ -11,15 +11,13 @@ class DiscordInteractionResponseTest extends TestCase
     public function testClass()
     {
         $code = 201;
-        $data = ['key' => 'value'];
         $type = 12;
 
-        $response = new DiscordInteractionResponse($type, $data, $code);
+        $response = new DiscordInteractionResponse($type, $code);
 
         $this->assertSame($code, $response->getStatus());
         $this->assertEquals([
-            'type' => $type,
-            'data' => $data,
+            'type' => $type
         ], $response->toArray());
     }
 }

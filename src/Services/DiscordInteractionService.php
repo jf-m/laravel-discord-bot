@@ -27,6 +27,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
         InteractionHandler::REQUEST_TYPE_PING => PingHandler::class,
         InteractionHandler::REQUEST_TYPE_APPLICATION_COMMAND => ApplicationCommandHandler::class,
         InteractionHandler::REQUEST_TYPE_MESSAGE_COMPONENT => MessageComponentInteractionHandler::class,
+        InteractionHandler::REQUEST_TYPE_MODAL_SUBMIT => MessageComponentInteractionHandler::class
     ];
 
     public function __construct(string $applicationId, string $publicKey, Application $laravel)
@@ -43,7 +44,12 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
             $parameter
         ] = json_decode($customId, flags: \JSON_UNESCAPED_UNICODE);
         if (!class_exists($className)) {
-            $className = config('discord.interactions.namespace') . $className;
+            foreach (config('discord.interactions.namespaces', []) as $namespace) {
+                if (class_exists($namespace . $className)) {
+                    $className = $namespace . $className;
+                    break;
+                }
+            }
         }
         $model = new $className();
 

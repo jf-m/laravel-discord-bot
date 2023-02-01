@@ -11,13 +11,10 @@ class DiscordInteractionResponse implements Arrayable
 
     protected int $type;
 
-    protected ?array $data;
-
-    public function __construct(int $type, ?array $data = null, ?int $status = 200)
+    public function __construct(int $type, ?int $status = 200)
     {
         $this->status = $status;
         $this->type = $type;
-        $this->data = $data;
     }
 
     public function getStatus(): int
@@ -25,11 +22,21 @@ class DiscordInteractionResponse implements Arrayable
         return $this->status;
     }
 
+    public function getData(): ?array
+    {
+        return null;
+    }
+
     public function toArray(): array
     {
         return array_filter([
             'type' => $this->type,
-            'data' => $this->data,
+            'data' => $this->getData(),
         ]);
+    }
+
+    public function validate(): void
+    {
+
     }
 }

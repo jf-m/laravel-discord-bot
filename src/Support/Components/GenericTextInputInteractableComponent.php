@@ -26,7 +26,7 @@ abstract class GenericTextInputInteractableComponent implements DiscordInteracta
 
     protected ?bool $required = null;
 
-    protected ?string $value = null;
+    public ?string $value = null;
 
     protected ?string $placeholder = null;
 

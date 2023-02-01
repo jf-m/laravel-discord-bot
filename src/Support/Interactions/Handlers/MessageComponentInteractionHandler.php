@@ -41,6 +41,7 @@ class MessageComponentInteractionHandler extends InteractionHandler
                 DiscordInteractionHandlerJob::dispatch($requestData, $component);
             }
             if ($response = $component->getInteractionResponse($requestData)) {
+                $response->validate();
                 return $response;
             }
 

@@ -13,7 +13,10 @@ return [
     'public_key' => env('DISCORD_PUBLIC_KEY'),
     'custom_id_character_limit' => 100,
     'interactions' => [
-        'namespace' => 'App\\',
+        'namespaces' => [
+            "App\\",
+            "Nwilging\\LaravelDiscordBot\\Support\\Components\\"
+        ],
         'default_queue' => null,
         'default_connection' => null,
         'component_interaction_default_behavior' => (in_array(

@@ -19,7 +19,7 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
     public ?string $parameter = null;
     protected string $title;
     /**
-     * @var DiscordComponent[]
+     * @var GenericTextInputInteractableComponent[]
      */
     protected array $components = [];
 
@@ -28,10 +28,10 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         $this->title = $title;
         $this->components = $components;
         $this->parameter = $parameter;
-        parent::__construct(DiscordComponent::REPLY_WITH_MODAL, null, $status);
+        parent::__construct(DiscordComponent::REPLY_WITH_MODAL, $status);
     }
 
-    public function component(DiscordComponent $component): static
+    public function component(GenericTextInputInteractableComponent $component): static
     {
         $this->components[] = $component;
         return $this;
@@ -56,9 +56,14 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         $this->onModalSubmitted($interactionRequest);
     }
 
-    protected function getComponentWithParameter(string $parameter): ?DiscordComponent
+    protected function getComponentWithParameter(string $parameter): ?GenericTextInputInteractableComponent
     {
-        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof DiscordInteractableComponent && $component->getParameter() == $parameter)[0] ?? null;
+        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getParameter() == $parameter)[0] ?? null;
+    }
+
+    protected function getSubmitedValueForComponentWithParameter(string $parameter): ?string
+    {
+        return $this->getComponentWithParameter($parameter)?->value;
     }
 
     abstract public function onModalSubmitted(array $interactionRequest): void;
@@ -86,17 +91,14 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         return $this->type;
     }
 
-    public function toArray(): array
+    public function getData(): ?array
     {
         return array_filter([
-            'type' => $this->getType(),
-            'data' => [
-                'custom_id' => $this->getCustomId(),
-                'title' => $this->title,
-                'components' => array_map(function (DiscordComponent $component): array {
-                    return $component->toArray();
-                }, $this->components),
-            ],
+            'custom_id' => $this->getCustomId(),
+            'title' => $this->title,
+            'components' => array_map(function (GenericTextInputInteractableComponent $component): array {
+                return $component->toArray();
+            }, $this->components),
         ]);
     }
 }

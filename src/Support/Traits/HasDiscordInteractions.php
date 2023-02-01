@@ -33,7 +33,13 @@ trait HasDiscordInteractions
     protected function getCustomId(): ?string
     {
         $className = get_class($this);
-        $className = str_replace(config('discord.interactions.namespace', 'App'), '', $className);
+        foreach (config('discord.interactions.namespaces', ['App\\']) as $namespace) {
+            $truncClassName = str_replace($namespace, '', $className);
+            if ($truncClassName != $className) {
+                $className = $truncClassName;
+                break;
+            }
+        }
 
         return json_encode([
             $className,
@@ -61,9 +67,9 @@ trait HasDiscordInteractions
     public function validate(): void
     {
         $charLimit = config('discord.custom_id_character_limit');
-
-        if (strlen($this->getCustomId()) > $charLimit) {
-            throw new \Exception(sprintf("Discord does not allow a payload of more than %s characters. Reduce the length of your custom parameter or the classname of this component. Classname length: %s, parameter length: %s. https://discord.com/developers/docs/interactions/message-components#custom-id", $charLimit, strlen(get_class($this)), strlen($this->parameter)));
+        $customId = $this->getCustomId();
+        if ($customId && strlen($customId) > $charLimit) {
+            throw new \Exception(sprintf("Discord does not allow a payload of more than %s characters. Reduce the length of your custom parameter or the classname of this component. Classname length: %s, parameter length: %s. https://discord.com/developers/docs/interactions/message-components#custom-id", $charLimit, strlen($customId), strlen($this->parameter)));
         }
     }
 
