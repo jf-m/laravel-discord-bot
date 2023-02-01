@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ParagraphTextInputComponent;
 use Nwilging\LaravelDiscordBotTests\TestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ParagraphTextInputComponentTest extends TestCase
 {
@@ -17,10 +15,10 @@ class ParagraphTextInputComponentTest extends TestCase
     {
         $label = 'label';
 
-        $component = $this->getMockBuilder(ParagraphTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label])->getMock();
+        $component = $this->getMockBuilder(ParagraphTextInputComponent::class)->onlyMethods([])->setConstructorArgs([$label])->getMock();
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_TEXT_INPUT,
+            'type' => DiscordComponent::TYPE_TEXT_INPUT,
             'style' => GenericTextInputInteractableComponent::STYLE_PARAGRAPH,
             'label' => $label,
         ], $component->toArray());
@@ -35,7 +33,7 @@ class ParagraphTextInputComponentTest extends TestCase
         $placeholder = 'test placeholder';
         $value = 'test value';
 
-        $component = $this->getMockBuilder(ParagraphTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label])->getMock();
+        $component = $this->getMockBuilder(ParagraphTextInputComponent::class)->onlyMethods([])->setConstructorArgs([$label])->getMock();
 
         $component->withPlaceholder($placeholder);
         $component->withMinLength($minLength);
@@ -44,7 +42,7 @@ class ParagraphTextInputComponentTest extends TestCase
         $component->required();
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_TEXT_INPUT,
+            'type' => DiscordComponent::TYPE_TEXT_INPUT,
             'style' => GenericTextInputInteractableComponent::STYLE_PARAGRAPH,
             'label' => $label,
             'min_length' => $minLength,
@@ -53,19 +51,5 @@ class ParagraphTextInputComponentTest extends TestCase
             'value' => $value,
             'required' => true,
         ], $component->toArray());
-    }
-
-    public function testComponentInteraction()
-    {
-        $label = 'test label';
-        $value = 'test';
-        $interactionRequest = ['data' => ['value' => $value, 'id' => '1']];
-
-        $component = $this->getMockBuilder(ParagraphTextInputComponent::class)->onlyMethods(['onTextSubmitted'])->setConstructorArgs([$label, $value])->getMock();
-        $component->expects($this->once())
-            ->method('onTextSubmitted')
-            ->with($value, $interactionRequest);
-        $job = new DiscordInteractionHandlerJob($interactionRequest, $component);
-        $job->handle();
     }
 }

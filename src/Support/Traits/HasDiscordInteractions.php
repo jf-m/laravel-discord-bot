@@ -1,31 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace Nwilging\LaravelDiscordBot\Support;
+namespace Nwilging\LaravelDiscordBot\Support\Traits;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-/**
- * Abstract Message InteractableComponent
- * @see https://discord.com/developers/docs/interactions/message-components#component-object
- */
-abstract class InteractableComponent extends Component
+trait HasDiscordInteractions
 {
-
     public ?string $parameter = null;
 
     public ?string $interactOnQueue = null;
     public ?string $interactOnConnection = null;
-
-    /**
-     * @param string|null $parameter
-     */
-    public function __construct(?string $parameter)
-    {
-        $this->parameter = $parameter;
-    }
 
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
@@ -34,22 +22,23 @@ abstract class InteractableComponent extends Component
 
     abstract public function onInteract(array $interactionRequest): void;
 
+    public function getParameter(): ?string
+    {
+        return $this->parameter;
+    }
+
     /**
      * @throws \Exception
      */
-    protected function getCustomId(): string
+    protected function getCustomId(): ?string
     {
         $className = get_class($this);
-        $className = str_replace(config('discord.interactions.namespace'), '', $className);
-        $c = json_encode([
+        $className = str_replace(config('discord.interactions.namespace', 'App'), '', $className);
+
+        return json_encode([
             $className,
             $this->parameter
         ], \JSON_UNESCAPED_UNICODE);
-        if (strlen($c) > 100) {
-            throw new \Exception(sprintf("Discord does not allow a payload of more than 100 characters. Reduce the length of your custom parameter or the classname of this component. Classname length: %s, parameter length: %s.", strlen($className), strlen($this->parameter)));
-        }
-
-        return $c;
     }
 
     public function onQueue(string $queue): self
@@ -69,6 +58,16 @@ abstract class InteractableComponent extends Component
         return !($this instanceof ShouldQueue);
     }
 
+    public function validate(): void
+    {
+        $charLimit = config('discord.custom_id_character_limit');
+
+        if (strlen($this->getCustomId()) > $charLimit) {
+            throw new \Exception(sprintf("Discord does not allow a payload of more than %s characters. Reduce the length of your custom parameter or the classname of this component. Classname length: %s, parameter length: %s. https://discord.com/developers/docs/interactions/message-components#custom-id", $charLimit, strlen(get_class($this)), strlen($this->parameter)));
+        }
+    }
+
+
     /**
      * Returns a Discord-API compliant component array
      *
@@ -78,9 +77,9 @@ abstract class InteractableComponent extends Component
      */
     public function toArray(): array
     {
-        return $this->arrayFilterRecursive([
+        return [
             'custom_id' => $this->getCustomId(),
-            'type' => $this->getType(),
-        ]);
+            'type' => $this->getType()
+        ];
     }
 }

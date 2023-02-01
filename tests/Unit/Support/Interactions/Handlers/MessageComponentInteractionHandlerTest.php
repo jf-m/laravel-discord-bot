@@ -7,17 +7,14 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Mockery\MockInterface;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
-use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionReplyResponse;
 use Nwilging\LaravelDiscordBotTests\TestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class MessageComponentInteractionHandlerTest extends TestCase
 {
@@ -55,7 +52,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertArraySubset([
-            'type' => Component::REPLY_TO_MESSAGE,
+            'type' => DiscordComponent::REPLY_TO_MESSAGE,
             'data' => [
                 'content' => 'custom reply',
             ],
@@ -86,7 +83,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertArraySubset([
-            'type' => Component::DEFER_WHILE_HANDLING,
+            'type' => DiscordComponent::DEFER_WHILE_HANDLING,
         ], $result->toArray());
         Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
             $this->assertSame($parameterBag, $job->data);
@@ -117,7 +114,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertArraySubset([
-            'type' => Component::LOAD_WHILE_HANDLING,
+            'type' => DiscordComponent::LOAD_WHILE_HANDLING,
         ], $result->toArray());
         Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
             $this->assertSame($parameterBag, $job->data);
@@ -145,7 +142,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $result = $handler->handle($request);
         $this->assertEquals(200, $result->getStatus());
         $this->assertArraySubset([
-            'type' => Component::DEFER_WHILE_HANDLING,
+            'type' => DiscordComponent::DEFER_WHILE_HANDLING,
         ], $result->toArray());
         Bus::assertDispatched(DiscordInteractionHandlerJob::class, function (DiscordInteractionHandlerJob $job) use ($parameterBag): bool {
             $this->assertSame($parameterBag, $job->data);

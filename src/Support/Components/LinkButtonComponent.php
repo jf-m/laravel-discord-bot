@@ -22,9 +22,13 @@ class LinkButtonComponent extends GenericButtonInteractableComponent
         $this->url = $url;
     }
 
-    public function onClicked(array $interactionRequest): void
+    final public function onClicked(array $interactionRequest): void
     {
+        // No interactions sent by Discord for Link Buttons
+    }
 
+    protected function getCustomId(): ?string {
+        return null;
     }
 
     public function toArray(): array

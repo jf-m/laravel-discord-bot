@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasEmojiObject;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
-abstract class GenericButtonInteractableComponent extends InteractableComponent
+abstract class GenericButtonInteractableComponent implements DiscordComponent, DiscordInteractableComponent
 {
-    use FiltersRecursive, HasEmojiObject;
+    use FiltersRecursive, HasEmojiObject, HasDiscordInteractions;
 
     public const STYLE_PRIMARY = 1;
     public const STYLE_SECONDARY = 2;
@@ -28,15 +28,14 @@ abstract class GenericButtonInteractableComponent extends InteractableComponent
 
     public function __construct(int $style, string $label, ?string $parameter = null)
     {
-        parent::__construct($parameter);
-
+        $this->parameter = $parameter;
         $this->style = $style;
         $this->label = $label;
     }
 
-    protected function getType(): int
+    public function getType(): int
     {
-        return Component::TYPE_BUTTON;
+        return DiscordComponent::TYPE_BUTTON;
     }
 
     /**

@@ -11,6 +11,7 @@ return [
     'api_url' => env('DISCORD_API_URL', 'https://discord.com/api'),
     'application_id' => env('DISCORD_APPLICATION_ID'),
     'public_key' => env('DISCORD_PUBLIC_KEY'),
+    'custom_id_character_limit' => 100,
     'interactions' => [
         'namespace' => 'App\\',
         'default_queue' => null,

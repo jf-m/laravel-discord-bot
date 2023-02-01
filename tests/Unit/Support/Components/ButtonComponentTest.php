@@ -4,17 +4,12 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
 use Illuminate\Http\Request;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
-use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonInteractableComponent;
-use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
-use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Objects\EmojiObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ButtonComponentTest extends TestCase
 {
@@ -25,7 +20,7 @@ class ButtonComponentTest extends TestCase
         $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_BUTTON,
+            'type' => DiscordComponent::TYPE_BUTTON,
             'style' => GenericButtonInteractableComponent::STYLE_PRIMARY,
             'label' => $label,
         ], $component->toArray());
@@ -45,7 +40,7 @@ class ButtonComponentTest extends TestCase
         $component->disabled();
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_BUTTON,
+            'type' => DiscordComponent::TYPE_BUTTON,
             'style' => GenericButtonInteractableComponent::STYLE_PRIMARY,
             'label' => $label,
             'disabled' => true,
@@ -78,7 +73,7 @@ class ButtonComponentTest extends TestCase
         }
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_BUTTON,
+            'type' => DiscordComponent::TYPE_BUTTON,
             'style' => $expectedStyle,
             'label' => $label,
         ], $component->toArray());

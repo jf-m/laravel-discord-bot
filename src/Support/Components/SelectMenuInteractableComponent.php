@@ -4,19 +4,18 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Objects\SelectOptionObject;
-use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
 /**
  * Select Menu InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
  */
-abstract class SelectMenuInteractableComponent extends InteractableComponent
+abstract class SelectMenuInteractableComponent implements DiscordInteractableComponent
 {
-    use MergesArrays;
+    use HasDiscordInteractions;
 
     /**
      * @var SelectOptionObject[]
@@ -37,7 +36,7 @@ abstract class SelectMenuInteractableComponent extends InteractableComponent
      */
     public function __construct(array $options, ?string $parameter = null)
     {
-        parent::__construct($parameter);
+        $this->parameter = $parameter;
         $this->options = $options;
     }
 
@@ -95,15 +94,17 @@ abstract class SelectMenuInteractableComponent extends InteractableComponent
 
     public function getType(): int
     {
-        return Component::TYPE_SELECT_MENU;
+        return DiscordComponent::TYPE_SELECT_MENU;
     }
 
     public function toArray(): array
     {
-        return $this->toMergedArray([
+        return array_filter([
             'options' => array_map(function (SelectOptionObject $option): array {
                 return $option->toArray();
             }, $this->options),
+            'custom_id' => $this->getCustomId(),
+            'type' => $this->getType(),
             'placeholder' => $this->placeholder,
             'min_values' => $this->minValues,
             'max_values' => $this->maxValues,
@@ -113,10 +114,10 @@ abstract class SelectMenuInteractableComponent extends InteractableComponent
 
     final public function onInteract(array $interactionRequest): void
     {
-        $components = $interactionRequest['data']['components'];
+        $values = $interactionRequest['data']['values'] ?? [];
         $submittedComponents = [];
-        foreach ($components as $component) {
-            $submittedComponents[] = new SelectOptionObject($component['label'], $component['value']);
+        foreach ($values as $value) {
+            $submittedComponents[] = new SelectOptionObject($value, $value);
         }
         $this->onMenuItemsSubmitted($submittedComponents, $interactionRequest);
     }

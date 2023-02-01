@@ -3,14 +3,15 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalComponent;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
-abstract class GenericTextInputInteractableComponent extends InteractableComponent
+abstract class GenericTextInputInteractableComponent implements DiscordInteractableModalComponent
 {
-    use FiltersRecursive;
+    use FiltersRecursive, HasDiscordInteractions;
 
     public const STYLE_SHORT = 1;
     public const STYLE_PARAGRAPH = 2;
@@ -31,13 +32,13 @@ abstract class GenericTextInputInteractableComponent extends InteractableCompone
 
     public function __construct(int $style, string $label, ?string $parameter = null)
     {
-        parent::__construct($parameter);
-
+        $this->parameter = $parameter;
         $this->style = $style;
         $this->label = $label;
     }
 
-    public function label(string $label): static {
+    public function label(string $label): static
+    {
         $this->label = $label;
         return $this;
     }
@@ -94,6 +95,10 @@ abstract class GenericTextInputInteractableComponent extends InteractableCompone
         return $this;
     }
 
+    public function setValue(string $value): void {
+        $this->value = $value;
+    }
+
     /**
      * Whether this component is required to be filled, default true
      *
@@ -109,7 +114,7 @@ abstract class GenericTextInputInteractableComponent extends InteractableCompone
 
     public function getType(): int
     {
-        return Component::TYPE_TEXT_INPUT;
+        return DiscordComponent::TYPE_TEXT_INPUT;
     }
 
     /**
@@ -135,8 +140,6 @@ abstract class GenericTextInputInteractableComponent extends InteractableCompone
 
     final public function onInteract(array $interactionRequest): void
     {
-        $this->onTextSubmitted($interactionRequest['data']['value'], $interactionRequest);
+        // Inputs are Modal components, the interaction happens within the parent modal
     }
-
-    abstract public function onTextSubmitted(?string $text, array $interactionRequest): void;
 }

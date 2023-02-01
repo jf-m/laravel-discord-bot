@@ -22,6 +22,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     public function assertArraySubset($expectedArraySubset, $actualArray): void
     {
         foreach ($expectedArraySubset as $expectedKey => $expectedValue) {
+            $this->assertArrayHasKey($expectedKey, $actualArray, 'Expected key `'. $expectedKey . '` not found in array ' . json_encode($actualArray));
             $this->assertEquals($expectedValue, $actualArray[$expectedKey]);
         }
     }

@@ -1,4 +1,5 @@
 # 
+
 Laravel Discord Bot
 A robust Discord messaging integration for Laravel
 
@@ -20,8 +21,8 @@ and components that will help you to build rich-text messages as well as handle
 # Installation
 
 ### Pre Requisites
-1. Laravel v8+
-2. PHP 7.4+
+1. Laravel v9+
+2. PHP 8.0+
 3. [libsodium](https://doc.libsodium.org/bindings_for_other_languages#programming-languages-whose-standard-library-includes-support-for-libsodium)
 
 ### Install with Composer
@@ -113,19 +114,14 @@ class TestNotification extends Notification implements DiscordNotificationContra
 
     public function toDiscord($notifiable): DiscordMessage
     {
-        $embedBuilder = new EmbedBuilder();
-        $embedBuilder->addAuthor('Me!');
-
-        $componentBuilder = new ComponentBuilder();
-        $componentBuilder->addActionButton('My Button', 'customId');
+        $embed = new Embed('Title', 'Description');
+        $embed->withColor(12345);
+        $embed->withAuthor(new AuthorEmbed('John Doe'));
 
         return (new DiscordMessage())
             ->message('message content')
             ->channelId('channel id')
-            ->embeds($embedBuilder->getEmbeds())
-            ->components([
-                $componentBuilder->getActionRow()
-            ]);
+            ->embeds([$embed]);
     }
 }
 ```
@@ -139,11 +135,95 @@ the Discord client application by enabling developer tools.
 
 ---
 
-# Interactions Usage
+# Interactions
 
-If you are sending messages that have components such as buttons, inputs, menus, etc, Discord will be prepared
-to send user interactions with these components as requests to a specified endpoint - essentially a webhook - with the
-interaction event payload.
+If you are sending messages that have components such as buttons, inputs, menus, etc, Discord will be prepared to send user interactions with these components as requests to a specified endpoint - essentially a webhook - with the interaction event payload.
+
+## Create your Components
+
+You can extend `ButtonComponent`, `SelectMenuComponent`, `ParagraphTextInputComponent`, `ShortTextInputComponent` to create your own component and allows interactions.
+
+### Interaction Handling
+
+#### ButtonComponent
+
+Create a custom Button component in your messages. Example:
+
+```phpt
+use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class FooButtonComponent extends ButtonComponent implements ShouldQueue
+{
+    public function __construct(?string $label = 'Foo')
+    {
+        parent::__construct($label);
+    }
+
+    public function onClicked(array $interactionRequest): void
+    {
+        // You can do something on your side once this button is clicked
+    }
+}
+```
+
+#### ShortTextInputComponent
+
+Create a custom short Text Input component in your messages. Example:
+
+```phpt
+use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class FooShortTextInputComponent extends ShortTextInputComponent implements ShouldQueue
+{
+    public function __construct(?string $label = 'Foo')
+    {
+        parent::__construct($label);
+    }
+
+    public function onTextSubmitted(?string $text, array $interactionRequest): void
+    {
+        // You can do something on your side once the text is submitted.
+    }
+}
+```
+
+### Interaction Response
+
+When `Discord` sends the interaction to your webhook, you can specify how your application is going to respond to this interaction using `getInteractionResponse` in your component.
+
+#### Simple text reply example
+
+```phpt
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
+    {
+        return new DiscordInteractionReplyResponse('Thank you for this interaction');
+    }
+```
+
+#### Load while the interaction is processing
+
+```phpt
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
+    {
+        return new DiscordInteractionResponse(Component::LOAD_WHILE_HANDLING);
+    }
+```
+
+#### Defer the response
+
+```phpt
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
+    {
+        return new DiscordInteractionResponse(Component::DEFER_WHILE_HANDLING);
+    }
+```
+
+
+#### Default behavior
+
+When the `getInteractionResponse` is not overriden, the default behavior uses the environment variable `DISCORD_COMPONENT_INTERACTION_DEFAULT_BEHAVIOR` which can be set to either `defer` or `load`.
 
 ### Setting up interactions
 

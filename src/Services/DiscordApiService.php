@@ -4,11 +4,8 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Services;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\ClientException;
-use Mockery\Exception;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Psr\Http\Message\ResponseInterface;
 
@@ -38,7 +35,8 @@ class DiscordApiService implements DiscordApiServiceContract
         }
 
         if ($components) {
-            $payload['components'] = array_map(function (Component $component): array {
+            $payload['components'] = array_map(function (DiscordComponent $component): array {
+                $component->validate();
                 return $component->toArray();
             }, $components);
         }

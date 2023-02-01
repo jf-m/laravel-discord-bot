@@ -3,21 +3,19 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
-use Illuminate\Contracts\Support\Arrayable;
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 
-class ActionRow extends Component
+class ActionRow implements DiscordComponent
 {
     protected ?string $content;
 
     /**
-     * @var Component[]
+     * @var DiscordComponent[]
      */
     protected array $components = [];
 
     /**
-     * @param Component[] $components
+     * @param DiscordComponent[] $components
      * @param ?string $content
      */
     public function __construct(array $components = [], ?string $content = null)
@@ -32,15 +30,22 @@ class ActionRow extends Component
         return $this;
     }
 
-    public function addComponent(Component $component): static
+    public function addComponent(DiscordComponent $component): static
     {
         $this->components[] = $component;
         return $this;
     }
 
-    protected function getType()
+    public function getType(): int
     {
-        return Component::TYPE_ACTION_ROW;
+        return DiscordComponent::TYPE_ACTION_ROW;
+    }
+
+    public function validate(): void
+    {
+        foreach ($this->components as $component) {
+            $component->validate();
+        }
     }
 
     public function toArray(): array
@@ -48,7 +53,7 @@ class ActionRow extends Component
         return array_filter([
             'content' => $this->content,
             'type' => $this->getType(),
-            'components' => array_map(function (Component $component): array {
+            'components' => array_map(function (DiscordComponent $component): array {
                 return $component->toArray();
             }, $this->components),
         ]);

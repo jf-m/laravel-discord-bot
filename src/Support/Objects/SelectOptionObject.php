@@ -17,7 +17,7 @@ class SelectOptionObject extends SupportObject
 
     protected string $label;
 
-    protected string $value;
+    public string $value;
 
     protected ?string $description = null;
 

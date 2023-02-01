@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Action Button InteractableComponent

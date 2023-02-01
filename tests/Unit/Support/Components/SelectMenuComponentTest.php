@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Nwilging\LaravelDiscordBotTests\Unit\Support\Components;
 
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
-use Nwilging\LaravelDiscordBot\Support\Component;
-use Nwilging\LaravelDiscordBot\Support\InteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\SelectMenuInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Objects\SelectOptionObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
@@ -27,7 +26,7 @@ class SelectMenuComponentTest extends TestCase
         $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[$option1, $option2]])->getMock();
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_SELECT_MENU,
+            'type' => DiscordComponent::TYPE_SELECT_MENU,
             'options' => [$expectedOption1Array, $expectedOption2Array],
         ], $component->toArray());
     }
@@ -50,7 +49,7 @@ class SelectMenuComponentTest extends TestCase
         $component->disabled();
 
         $this->assertArraySubset([
-            'type' => Component::TYPE_SELECT_MENU,
+            'type' => DiscordComponent::TYPE_SELECT_MENU,
             'options' => [$expectedOption1Array, $expectedOption2Array],
             'placeholder' => 'test placeholder',
             'min_values' => 5,
@@ -63,15 +62,12 @@ class SelectMenuComponentTest extends TestCase
     {
         $selectedOptionOne = '1';
         $selectedOptionTwo = '5';
-        $interactionRequest = ['data' => ['components' => [
-            ['value' => $selectedOptionOne, 'label' => $selectedOptionOne],
-            ['value' => $selectedOptionTwo, 'label' => $selectedOptionTwo],
-        ], 'id' => '1']];
+        $interactionRequest = ['data' => ['values' => [$selectedOptionOne, $selectedOptionTwo], 'id' => '1']];
 
         $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[]])->getMock();
         $component->expects($this->once())
             ->method('onMenuItemsSubmitted')
-            ->with([new SelectOptionObject($selectedOptionOne, $selectedOptionOne),new SelectOptionObject($selectedOptionTwo, $selectedOptionTwo)], $interactionRequest);
+            ->with([new SelectOptionObject($selectedOptionOne, $selectedOptionOne), new SelectOptionObject($selectedOptionTwo, $selectedOptionTwo)], $interactionRequest);
         $job = new DiscordInteractionHandlerJob($interactionRequest, $component);
         $job->handle();
     }
