@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
-use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalComponent;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;

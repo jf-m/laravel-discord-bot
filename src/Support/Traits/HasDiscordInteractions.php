@@ -72,20 +72,4 @@ trait HasDiscordInteractions
             throw new \Exception(sprintf("Discord does not allow a payload of more than %s characters. Reduce the length of your custom parameter or the classname of this component. Classname length: %s, parameter length: %s. https://discord.com/developers/docs/interactions/message-components#custom-id", $charLimit, strlen($customId), strlen($this->parameter)));
         }
     }
-
-
-    /**
-     * Returns a Discord-API compliant component array
-     *
-     * @see https://discord.com/developers/docs/interactions/message-components#component-object
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return [
-            'custom_id' => $this->getCustomId(),
-            'type' => $this->getType()
-        ];
-    }
 }

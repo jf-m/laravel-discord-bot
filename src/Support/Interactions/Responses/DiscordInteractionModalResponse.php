@@ -44,14 +44,14 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
 
     final public function onInteract(array $interactionRequest): void
     {
-        $components = $interactionRequest['components'];
+        $components = $interactionRequest['data']['components'][0]['components'];
         /** @var DiscordInteractionService $discordInteractionService */
         $discordInteractionService = app()->make(DiscordInteractionService::class);
         foreach ($components as $component) {
             /** @var DiscordInteractableModalComponent $component */
-            $component = $discordInteractionService->getComponentFromCustomId($component['custom_id']);
-            $component->setValue($component['value']);
-            $this->components[] = $component;
+            $componentObj = $discordInteractionService->getComponentFromCustomId($component['custom_id'], '');
+            $componentObj->setValue($component['value']);
+            $this->components[] = $componentObj;
         }
         $this->onModalSubmitted($interactionRequest);
     }
@@ -94,11 +94,14 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
     public function getData(): ?array
     {
         return array_filter([
-            'custom_id' => $this->getCustomId(),
-            'title' => $this->title,
-            'components' => array_map(function (GenericTextInputInteractableComponent $component): array {
-                return $component->toArray();
-            }, $this->components),
+            'custom_id'  => $this->getCustomId(),
+            'title'      => $this->title,
+            'components' => [
+                [
+                    'type'       => DiscordComponent::TYPE_ACTION_ROW,
+                    'components' => array_map(fn(GenericTextInputInteractableComponent $component) => $component->toArray(), $this->components)
+                ]
+            ],
         ]);
     }
 }
