@@ -106,16 +106,16 @@ class TestNotification extends Notification implements DiscordNotificationContra
 
     public function toDiscord($notifiable): DiscordMessage
     {
-        $embed = new Embed('Birman', 'The Birman, also called the "Sacred Cat of Burma", is a domestic cat breed.', '2022-10-21T00:00:00.000Z');
+        $embed = new Embed('Title', 'Description', '2022-10-21T00:00:00.000Z');
         $embed->withColor(16711680) // Red
-              ->withImage(new ImageEmbed('https://upload.wikimedia.org/wikipedia/commons/0/06/Birmanstrofe.jpg'))
-              ->withAuthor(new AuthorEmbed('Cat behaviorist', 'https://en.wikipedia.org/wiki/Cat_behaviorist'))
-              ->withFooter(new FooterEmbed('Thanks for reading', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/P%C3%A9pita_Sacr%C3%A9_de_Birmanie.jpg/1024px-P%C3%A9pita_Sacr%C3%A9_de_Birmanie.jpg'))
-              ->withField((new FieldEmbed('Weight', '2.7 - 5.4kg'))->inline())
-              ->withField((new FieldEmbed('Lifespan', '12 - 16 years'))->inline());
+              ->withImage(new ImageEmbed('http://image.link.co'))
+              ->withAuthor(new AuthorEmbed('Author name', 'http://author.co'))
+              ->withFooter(new FooterEmbed('Footer', 'http://footer.co'))
+              ->withField((new FieldEmbed('Field1', 'Value1'))->inline())
+              ->withField((new FieldEmbed('Field2', 'Value2'))->inline());
 
         return (new DiscordMessage())->channelId('MY_CHANNEL_ID')
-                                     ->message("Want to know more about the Birman cats? Here!")
+                                     ->message("Want to know more about stuff? It's here:")
                                      ->embeds([$embed]);
     }
 }
@@ -138,11 +138,11 @@ class TestNotification extends Notification implements DiscordNotificationContra
     public function toDiscord($notifiable): DiscordMessage
     {
         return (new DiscordMessage())->channelId('MY_CHANNEL_ID')
-                                     ->message("Want to know more about the Birman cats ? Here!")
+                                     ->message("Want to know more about stuff ? Here!")
                                      ->components([new ActionRow([
-                                         new LinkButtonComponent('Birman Wiki', 'https://en.wikipedia.org/wiki/Birman'),
-                                         new LinkButtonComponent('Birman CFA', 'https://cfa.org/wp-content/uploads/2019/06/birman-standard.pdf'),
-                                         new LinkButtonComponent('Birman FIFe', 'http://www1.fifeweb.org/dnld/std/SBI.pdf')
+                                         new LinkButtonComponent('Document 1', 'https://doc.1.co'),
+                                         new LinkButtonComponent('Document 1', 'https://doc.2.co'),
+                                         new LinkButtonComponent('Document 1', 'https://doc.3.co')
                                      ])]);
     }
 }
@@ -286,7 +286,6 @@ Then use your new component when sending a `DiscordMessage`
 ```
 
 > When a Discord user will have selected between 1 and 3 options, the bot will instantly answer `Performing the action.` as a reply to the initial message.
-
 
 
 ## Interaction Response
