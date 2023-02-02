@@ -352,7 +352,7 @@ class MyCustomInteractableDiscordButton extends ButtonComponent implements Shoul
 
     public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void {
         // We can then perform an action that will use the user input
-        \Log::info('Someone clicked on the button and then submitted their name: ' . $modal->getSubmittedValueForComponentWithParameter('name'));
+        \Log::info('Hi, ' . $modal->getSubmittedValueForComponentWithParameter('name') . ' and welcome.');
     }
 }
 ```
@@ -373,7 +373,7 @@ class MyCustomModalComponent extends DiscordInteractionModalResponse
 
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
-        return new DiscordInteractionReplyResponse('Noice.');
+        return new DiscordInteractionReplyResponse('Hi ' . $this->getSubmittedValueForComponentWithParameter('name') . ', welcome !');
     }
 
     public function onModalSubmitted(array $interactionRequest): void
@@ -383,7 +383,7 @@ class MyCustomModalComponent extends DiscordInteractionModalResponse
 }
 ```
 
-Then your `MyCustomModalComponent` can be used as an `DiscordInteractionResponse` in any Components:
+Then your `MyCustomModalComponent` can be used as an `DiscordInteractionResponse` in any Components, for instance a button:
 
 ```php
 
