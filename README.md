@@ -123,7 +123,7 @@ class TestNotification extends Notification implements DiscordNotificationContra
 
 ## Components
 
-Each `DiscordMessage` can include multiple `LinkButtonComponent` and Interactable Components
+Each `DiscordMessage` can include multiple `LinkButtonComponent` and [Interactable Components](#interactions)
 
 ```php
 class TestNotification extends Notification implements DiscordNotificationContract
@@ -318,7 +318,7 @@ When `Discord` sends the interaction to your webhook, you can specify how your a
 
 ### Reply with a modal and text-inputs
 
-You can prompt a Discord modal to the user to ask for text inputs. See "@Modal interaction response" section.
+You can prompt a Discord modal to the user to ask for text inputs. See [Modal interaction response](#modal-interaction-response)
 
 ### Default behavior
 
