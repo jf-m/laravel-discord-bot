@@ -147,9 +147,8 @@ Using your own implementation of `ButtonComponent` or `SelectMenuInteractableCom
 
 ## Setting up interactions
 
-First setup a controller and a route that you plan to use as the `Interactions Endpoint URL`. Within the controller, inject the `Nwilging\LaravelDiscordBot\Contracts\Services\DiscordInteractionServiceInterface`.
-
-You will call the `handleInteractionRequest` method on the aforementioned service. Example:
+Create a controller and a route for your endpoint URL. Within the controller, inject the `Nwilging\LaravelDiscordBot\Contracts\Services\DiscordInteractionServiceInterface`.
+You must call the `handleInteractionRequest` method on this service. Example:
 
 ```php
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordInteractionServiceContract;
@@ -170,9 +169,14 @@ class MyController extends Controller
     }
 }
 ```
-This will forward interactions requests from Discord through your app. **You must forward requests through this
-interaction service:** Discord requires signature verification, which this package performs automatically on every
-interactions request. Attempting to handle requests outside of this package is possible, but not recommended.
+
+```php 
+    Route::post('discord/interactions', 'Store\Webhooks\DiscordWebhooksController@handleInteractionRequest');
+```
+
+Don't forget to set your `INTERACTIONS ENDPOINT URL` to point this new route in your Discord App `General Information` setting.
+
+> This will forward interactions requests from Discord through your app. **You must forward requests through this interaction service:** Discord requires signature verification, which this package performs automatically on every interactions request. Attempting to handle requests outside of this package is possible, but not recommended.
 
 ## Create your Interactable Components
 
