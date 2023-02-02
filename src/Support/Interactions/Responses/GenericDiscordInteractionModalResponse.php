@@ -2,15 +2,14 @@
 
 namespace Nwilging\LaravelDiscordBot\Support\Interactions\Responses;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalComponent;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
-use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
-use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
-final class GenericDiscordInteractionModalResponse extends DiscordInteractionModalResponse
+final class GenericDiscordInteractionModalResponse extends DiscordInteractionModalResponse implements ShouldQueue
 {
 
     public function __construct(?string $title = null, array $components = [], mixed $parameter = null, ?int $status = 200)

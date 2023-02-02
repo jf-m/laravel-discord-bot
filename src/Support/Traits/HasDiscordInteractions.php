@@ -79,6 +79,9 @@ trait HasDiscordInteractions
 
     public function shouldDispatchSync(): bool
     {
+        if ($this->interactOnConnection) {
+            return false;
+        }
         return !($this instanceof ShouldQueue);
     }
 
