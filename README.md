@@ -125,8 +125,8 @@ class TestNotification extends Notification implements DiscordNotificationContra
                                      ->message("Want to know more about stuff ? Here!")
                                      ->components([new ActionRow([
                                          new LinkButtonComponent('Document 1', 'https://doc.1.co'),
-                                         new LinkButtonComponent('Document 1', 'https://doc.2.co'),
-                                         new LinkButtonComponent('Document 1', 'https://doc.3.co')
+                                         new LinkButtonComponent('Document 2', 'https://doc.2.co'),
+                                         new LinkButtonComponent('Link 3', 'https://link.3.co')
                                      ])]);
     }
 }
