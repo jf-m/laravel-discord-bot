@@ -23,7 +23,6 @@ and components that will help you to build rich-text messages as well as handle
 ### Pre Requisites
 1. Laravel v9+
 2. PHP 8.0+
-3. [libsodium](https://doc.libsodium.org/bindings_for_other_languages#programming-languages-whose-standard-library-includes-support-for-libsodium)
 
 ### Install with Composer
 ```
