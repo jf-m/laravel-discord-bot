@@ -171,7 +171,7 @@ class MyController extends Controller
 ```
 
 ```php 
-    Route::post('discord/interactions', 'Store\Webhooks\DiscordWebhooksController@handleInteractionRequest');
+    Route::post('discord/interactions', 'Webhooks\MyController@handleInteractionRequest');
 ```
 
 Don't forget to set your `INTERACTIONS ENDPOINT URL` to point this new route in your Discord App `General Information` setting.
