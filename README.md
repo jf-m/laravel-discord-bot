@@ -178,6 +178,14 @@ Don't forget to set your `INTERACTIONS ENDPOINT URL` to point this new route in 
 
 > This will forward interactions requests from Discord through your app. **You must forward requests through this interaction service:** Discord requires signature verification, which this package performs automatically on every interactions request. Attempting to handle requests outside of this package is possible, but not recommended.
 
+### Test your webhooks in localhost
+There is several tools available on the internet to relay discord interactions.
+
+To name a few:
+
+- [Webhook Relay](https://webhookrelay.com/)
+- [ngrok](https://ngrok.com)
+
 ## Create your Interactable Components
 
 You can extend `ButtonComponent` and `SelectMenuComponent` to create your own component and allows interactions.
