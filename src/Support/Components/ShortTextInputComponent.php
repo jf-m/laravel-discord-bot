@@ -11,7 +11,7 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  */
 class ShortTextInputComponent extends GenericTextInputInteractableComponent
 {
-    public function __construct(string $label, ?string $parameter = null)
+    public function __construct(string $label, mixed $parameter = null)
     {
         parent::__construct(static::STYLE_SHORT, $label, $parameter);
     }

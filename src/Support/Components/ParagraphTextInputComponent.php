@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class ParagraphTextInputComponent extends GenericTextInputInteractableComponent
 {
-    public function __construct(string $label, ?string $parameter = null)
+    public function __construct(string $label, mixed $parameter = null)
     {
         parent::__construct(static::STYLE_PARAGRAPH, $label, $parameter);
     }

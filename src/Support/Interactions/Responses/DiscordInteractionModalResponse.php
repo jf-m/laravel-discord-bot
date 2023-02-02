@@ -16,14 +16,13 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         validate as interactionValidate;
     }
 
-    public ?string $parameter = null;
     protected string $title;
     /**
      * @var GenericTextInputInteractableComponent[]
      */
     protected array $components = [];
 
-    public function __construct(string $title, array $components = [], ?string $parameter = null, ?int $status = 200)
+    public function __construct(string $title, array $components = [], mixed $parameter = null, ?int $status = 200)
     {
         $this->title = $title;
         $this->components = $components;
@@ -59,12 +58,12 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         $this->onModalSubmitted($interactionRequest);
     }
 
-    public function getComponentWithParameter(string $parameter): ?GenericTextInputInteractableComponent
+    public function getComponentWithParameter(mixed $parameter): ?GenericTextInputInteractableComponent
     {
         return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getParameter() == $parameter)[0] ?? null;
     }
 
-    public function getSubmitedValueForComponentWithParameter(string $parameter): ?string
+    public function getSubmittedValueForComponentWithParameter(mixed $parameter): ?string
     {
         return $this->getComponentWithParameter($parameter)?->value;
     }

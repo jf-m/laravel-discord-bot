@@ -12,6 +12,12 @@ use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
 final class GenericDiscordInteractionModalResponse extends DiscordInteractionModalResponse
 {
+
+    public function __construct(?string $title = null, array $components = [], mixed $parameter = null, ?int $status = 200)
+    {
+        parent::__construct($title ?: '', $components, $parameter, $status);
+    }
+
     public function populateFromInteractionRequest(array $interactionRequest): void
     {
         $components = $interactionRequest['data']['components'][0]['components'];
@@ -27,7 +33,7 @@ final class GenericDiscordInteractionModalResponse extends DiscordInteractionMod
 
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
-        $this->getRelatedComponent()->getInteractionResponseForResponseModal($this);
+        return $this->getRelatedComponent()->getInteractionResponseForResponseModal($this, $interactionRequest);
     }
 
     public function onModalSubmitted(array $interactionRequest): void

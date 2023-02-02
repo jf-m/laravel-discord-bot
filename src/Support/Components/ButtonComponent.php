@@ -13,7 +13,7 @@ abstract class ButtonComponent extends GenericButtonInteractableComponent
 {
     use MergesArrays;
 
-    public function __construct(string $label, ?string $parameter = null)
+    public function __construct(string $label, mixed $parameter = null)
     {
         parent::__construct(static::STYLE_PRIMARY, $label, $parameter);
     }

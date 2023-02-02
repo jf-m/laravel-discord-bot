@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HasDiscordInteractions
 {
-    public ?string $parameter = null;
+    public mixed $parameter = null;
 
     public ?string $interactOnQueue = null;
     public ?string $interactOnConnection = null;
@@ -40,7 +40,7 @@ trait HasDiscordInteractions
 
     abstract public function populateFromInteractionRequest(array $interactionRequest): void;
 
-    public function getParameter(): ?string
+    public function getParameter(): mixed
     {
         return $this->parameter;
     }

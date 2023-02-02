@@ -287,13 +287,11 @@ class TestNotification extends Notification implements DiscordNotificationContra
 {
     use Queueable;
 
-    public function via($notifiable)
-    {
+    public function via($notifiable) {
         return ['discord'];
     }
 
-    public function toDiscord($notifiable): DiscordMessage
-    {
+    public function toDiscord($notifiable): DiscordMessage {
         $selectMenu = new MyCustomInteractableDiscordSelectMenu();
         $selectMenu->addOption(new SelectOptionObject('Yellow', 'y')) // We are adding an additional option for this select-menu.
                    ->withMinValues(1)
@@ -318,8 +316,7 @@ When `Discord` sends the interaction to your webhook, you can specify how your a
 #### Simple text reply example
 
 ```php
-    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
-    {
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse {
         return new DiscordInteractionReplyResponse('Thank you for this interaction');
     }
 ```
@@ -331,8 +328,7 @@ You can prompt a Discord modal to the user to ask for text inputs. See "@Modal i
 #### Load while the interaction is processing
 
 ```php
-    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
-    {
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse {
         return new DiscordInteractionResponse(Component::LOAD_WHILE_HANDLING);
     }
 ```
@@ -340,8 +336,7 @@ You can prompt a Discord modal to the user to ask for text inputs. See "@Modal i
 #### Defer the response
 
 ```php
-    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
-    {
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse {
         return new DiscordInteractionResponse(Component::DEFER_WHILE_HANDLING);
     }
 ```
@@ -350,43 +345,40 @@ You can prompt a Discord modal to the user to ask for text inputs. See "@Modal i
 
 When the `getInteractionResponse` is not overriden or return `null`, the default behavior uses the `discord.php` configuration variable `interactions.component_interaction_default_behavior` which can be set to either `defer` or `load`.
 
-# Modal interaction response
+## Modal interaction response
 
 As a response to an interaction (Button or select-menu), you can prompt a modal to the user with a form that include between 1 and 5 text inputs.
-You can achieve this using two seperate methods, depending on your needs.
+You can achieve through two separate methods, depending on your needs.
 
-## Using a GenericModal
+### Using a GenericModal
 
 Within your component, you can response with a modal without having to create your own modal class.
 ```php
 
-class MyCustomInteractableDiscordButton extends ButtonComponent
-{
-    public function onClicked(array $interactionRequest): void
-    {
+class MyCustomInteractableDiscordButton extends ButtonComponent {
+    public function onClicked(array $interactionRequest): void {
         // Execute your action
         \Log::info('This user clicked on the button');
     }
 
-    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
-    {
-           return $this->createResponseModal('My Modal', [ new ShortTextInputComponent('Please enter your name', 'name') ]);
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse {
+        return $this->createResponseModal('My Modal', [ new ShortTextInputComponent('Please enter your name', 'name') ]);
     }
     
     public function getInteractionResponseForResponseModal(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse {
-            return new DiscordInteractionReplyResponse('Hi ' . $modal->getSubmitedValueForComponentWithParameter('name') . ', welcome !');
+        return new DiscordInteractionReplyResponse('Hi ' . $modal->getSubmittedValueForComponentWithParameter('name') . ', welcome !');
     }
 
     public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void {
-        
-        \Log::info('This user clicked on the button and then submitted their name: ' . $modal->getSubmitedValueForComponentWithParameter('name'));
+        \Log::info('This user clicked on the button and then submitted their name: ' . $modal->getSubmittedValueForComponentWithParameter('name'));
     }
 }
 ```
 
-## Creating your modal
+### Creating your modal
 
-You need to create your own custom modal
+You can also create your own class for the modal behavior.
+
 ```php
 class MyCustomModalComponent extends DiscordInteractionModalResponse
 {
@@ -404,7 +396,7 @@ class MyCustomModalComponent extends DiscordInteractionModalResponse
 
     public function onModalSubmitted(array $interactionRequest): void
     {
-        \Log::info('Hi, ' . $this->getSubmitedValueForComponentWithParameter('name') . ' and welcome.');
+        \Log::info('Hi, ' . $this->getSubmittedValueForComponentWithParameter('name') . ' and welcome.');
     }
 }
 ```
@@ -424,6 +416,55 @@ class MyCustomInteractableDiscordButton extends ButtonComponent
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
         return new MyCustomModalComponent();
+    }
+}
+```
+
+## Interaction Parameter
+
+When your `Component` or your `Modal` is sent to Discord, its classname is serialized along with its public property `parameter` and this serialized value is passed to Discord. When Discord send an interaction to your webhook, the original `Component` or `Model` class is recreated, and its public property `parameter` is populated.
+This `parameter` can be used at your convenience to save data between interactions. Example:
+
+
+
+`ButtonComponent` allows to perform an action when the discord user click on a button.
+
+```php
+class MyCustomInteractableDiscordButton extends ButtonComponent
+{
+    public function onClicked(array $interactionRequest): void
+    {
+        // Execute your action
+        $user = User::find($this->parameter);
+        
+    }
+
+    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
+    {
+        return new DiscordInteractionReplyResponse('Performing the action.');
+    }
+}
+```
+
+Then use your custom `MyCustomInteractableDiscordButton` when sending a `DiscordMessage`
+
+```php
+class TestNotification extends Notification implements DiscordNotificationContract
+{
+    use Queueable;
+
+    public function via($notifiable)
+    {
+        return ['discord'];
+    }
+
+    public function toDiscord($notifiable): DiscordMessage
+    {
+        return (new DiscordMessage())->channelId('MY_CHANNEL_ID')
+                                     ->message("Do you want to perform the action ? Then click on the following button:")
+                                     ->components([new ActionRow([
+                                         new MyCustomInteractableDiscordButton('Click me')
+                                     ])]);
     }
 }
 ```

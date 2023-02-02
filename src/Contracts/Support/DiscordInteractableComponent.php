@@ -21,7 +21,7 @@ interface DiscordInteractableComponent extends DiscordComponent
 
     public function shouldDispatchSync();
 
-    public function getParameter(): ?string;
+    public function getParameter(): mixed;
 
     public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void;
 

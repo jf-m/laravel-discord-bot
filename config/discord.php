@@ -45,7 +45,8 @@ return [
          */
         'namespaces' => [
             "App\\",
-            "Nwilging\\LaravelDiscordBot\\Support\\Components\\"
+            "Nwilging\\LaravelDiscordBot\\Support\\Components\\",
+            "Nwilging\\LaravelDiscordBot\\Support\\Interactions\\Responses\\"
         ],
         /**
          * Default queue for the discord interactions

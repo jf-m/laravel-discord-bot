@@ -26,7 +26,7 @@ abstract class GenericButtonInteractableComponent implements DiscordComponent, D
 
     protected ?bool $disabled = null;
 
-    public function __construct(int $style, string $label, ?string $parameter = null)
+    public function __construct(int $style, string $label, mixed $parameter = null)
     {
         $this->parameter = $parameter;
         $this->style = $style;

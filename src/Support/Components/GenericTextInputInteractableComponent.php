@@ -29,7 +29,7 @@ abstract class GenericTextInputInteractableComponent implements DiscordInteracta
 
     protected ?string $placeholder = null;
 
-    public function __construct(int $style, string $label, ?string $parameter = null)
+    public function __construct(int $style, string $label, mixed $parameter = null)
     {
         $this->parameter = $parameter;
         $this->style = $style;
