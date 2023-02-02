@@ -436,6 +436,25 @@ class ArchiveArticleDiscordButton extends ButtonComponent implements ShouldQueue
     }
 ```
 
+### Parameter Limitation
+Discord only allows up to [100 characters](https://discord.com/developers/docs/interactions/message-components#custom-id) inside the `custom_id` field. Therefore, in some rare cases, the serialized classname and parameter can exceed the 100 characters limit.
+An exception will be thrown if this is the case, to inform you that the action will not be possible.
+An easy way to reduce the size of the `custom_id` field is by adding the namespaces of your custom Components and Modal inside the configuration file.
+
+```php
+        /**
+         * Namespaces of your custom components and modals
+         * This is used to reduce the length of the custom_id parameter
+         */
+        'namespaces' => [
+            "App\\",
+            "Nwilging\\LaravelDiscordBot\\Support\\Components\\",
+            "Nwilging\\LaravelDiscordBot\\Support\\Interactions\\Responses\\"
+        ],
+```
+> By default, `App\\` is already configured, but if you decide to create a deeper namespace such as `App\MyProject\Discord\Components\`, then it's highly recommmended to append this namespace to your config file.
+
+
 ## Queuing Interactions
 
 Your Interactable Components must implement the `ShouldQueue` interface in order to be processed in a queued job.
