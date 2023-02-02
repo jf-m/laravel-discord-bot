@@ -51,21 +51,6 @@ Execute the following command to publish the `discord.php` configuration file in
 php artisan vendor:publish --provider="JohnDoeNwilging\LaravelDiscordBot\Providers\DiscordBotServiceProvider" --tag="config"
 ```
 
-`interactions.default_connection`
-
-The default behavior is to use `redis` as the default connection for all the Interactions with Discord.
-
-`interactions.default_queue`
-
-The default behavios is to use your default queue of your connection type. You can change the default queue to a specific queue in your `discord.php` config file.
-
-`interactions.component_interaction_default_behavior`
-
-When handling interactions the default response behavior is to "defer" - aka stop the loading process in the Discord
-app window and return no reply or other message. You can change it to "load" - which will show a loading
-message until your application sends a followup message - in your `discord.php` config file.
-
-
 # Notification Channel Usage
 
 Your notification class must implement the interface `Nwilging\LaravelDiscordBot\Contracts\Notifications\DiscordNotificationContract`, and include the `toDiscord(): array` method.
