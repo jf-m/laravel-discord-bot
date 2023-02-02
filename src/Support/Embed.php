@@ -19,6 +19,8 @@ use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
  */
 class Embed implements Arrayable
 {
+    protected ?string $url = null;
+
     protected ?string $title = null;
 
     protected ?string $description = null;
@@ -44,9 +46,10 @@ class Embed implements Arrayable
 
     protected ?ThumbnailEmbed $thumbnail = null;
 
-    public function __construct(?string $title = null, ?string $description = null, ?string $timestamp = null)
+    public function __construct(?string $title = null, ?string $description = null, ?string $url = null, ?string $timestamp = null)
     {
         $this->title = $title;
+        $this->url = $url;
         $this->description = $description;
         $this->timestamp = $timestamp;
     }
@@ -77,6 +80,12 @@ class Embed implements Arrayable
     public function withVideo(VideoEmbed $video): self
     {
         $this->video = $video;
+        return $this;
+    }
+
+    public function withURL(string $url): self
+    {
+        $this->url = $url;
         return $this;
     }
 
@@ -124,13 +133,14 @@ class Embed implements Arrayable
             'description' => $this->description,
             'timestamp' => $this->timestamp,
             'color' => $this->color,
-            'fields' => array_map(fn(FieldEmbed $embed) => $embed->toArray(), $this->fields ? $this->fields : []),
-            'video' => $this->video ? $this->video->toArray() : null,
-            'author' => $this->author ? $this->author->toArray() : null,
-            'footer' => $this->footer ? $this->footer->toArray() : null,
-            'image' => $this->image ? $this->image->toArray() : null,
-            'provider' => $this->provider ? $this->provider->toArray() : null,
-            'thumbnail' => $this->thumbnail ? $this->thumbnail->toArray() : null
+            'url' => $this->url,
+            'fields' => array_map(fn(FieldEmbed $embed) => $embed->toArray(), $this->fields ?: []),
+            'video' => $this->video?->toArray(),
+            'author' => $this->author?->toArray(),
+            'footer' => $this->footer?->toArray(),
+            'image' => $this->image?->toArray(),
+            'provider' => $this->provider?->toArray(),
+            'thumbnail' => $this->thumbnail?->toArray()
         ]);
     }
 }

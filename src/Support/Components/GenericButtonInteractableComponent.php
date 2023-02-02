@@ -62,6 +62,11 @@ abstract class GenericButtonInteractableComponent implements DiscordComponent, D
         ]));
     }
 
+    public function populateFromInteractionRequest(array $interactionRequest): void
+    {
+
+    }
+
     final public function onInteract(array $interactionRequest): void
     {
         $this->onClicked($interactionRequest);

@@ -15,13 +15,15 @@ class ImageEmbedTest extends TestCase
         $description = 'test description';
         $timestamp = '12345';
         $url = 'https://example.com';
-        $embed = new Embed($title, $description, $timestamp);
+        $embedUrl = 'url.com';
+        $embed = new Embed($title, $description, $embedUrl, $timestamp);
         $embed->withImage(new ImageEmbed($url));
 
         $this->assertEquals([
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
+            'url' => $embedUrl,
             'image' => [
                 'url' => $url,
             ],
@@ -36,10 +38,11 @@ class ImageEmbedTest extends TestCase
         $timestamp = '12345';
 
         $proxyUrl = 'https://example.com/proxy';
+        $embedUrl = 'url.com';
         $height = 256;
         $width = 512;
 
-        $embed = new Embed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $embedUrl, $timestamp);
 
         $imageEmbed = new ImageEmbed($url);
 
@@ -56,6 +59,7 @@ class ImageEmbedTest extends TestCase
                 'height' => $height,
                 'width' => $width,
             ],
+            'url' => $embedUrl,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,

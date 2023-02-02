@@ -15,7 +15,8 @@ class ProviderEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
-        $embed = new Embed($title, $description, $timestamp);
+        $url = 'url.com';
+        $embed = new Embed($title, $description, $url, $timestamp);
 
         $providerEmbed = new ProviderEmbed($name);
         $embed->withProvider($providerEmbed);
@@ -24,6 +25,7 @@ class ProviderEmbedTest extends TestCase
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
+            'url' => $url,
             'provider' => [
                 'name' => $name,
             ],
@@ -37,8 +39,9 @@ class ProviderEmbedTest extends TestCase
         $timestamp = '12345';
         $url = 'https://example.com';
         $name = 'test name';
+        $embedUrl = 'url.com';
 
-        $embed = new Embed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $embedUrl, $timestamp);
 
         $providerEmbed = new ProviderEmbed($name, $url);
         $embed->withProvider($providerEmbed);
@@ -48,6 +51,7 @@ class ProviderEmbedTest extends TestCase
                 'url' => $url,
                 'name' => $name,
             ],
+            'url' => $embedUrl,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,

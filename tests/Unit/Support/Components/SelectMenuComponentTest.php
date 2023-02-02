@@ -67,7 +67,7 @@ class SelectMenuComponentTest extends TestCase
         $component = $this->getMockBuilder(SelectMenuInteractableComponent::class)->onlyMethods(['onMenuItemsSubmitted'])->setConstructorArgs([[]])->getMock();
         $component->expects($this->once())
             ->method('onMenuItemsSubmitted')
-            ->with([new SelectOptionObject($selectedOptionOne, $selectedOptionOne), new SelectOptionObject($selectedOptionTwo, $selectedOptionTwo)], $interactionRequest);
+            ->with([$selectedOptionOne, $selectedOptionTwo], $interactionRequest);
         $job = new DiscordInteractionHandlerJob($interactionRequest, $component);
         $job->handle();
     }

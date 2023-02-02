@@ -3,12 +3,17 @@
 namespace Nwilging\LaravelDiscordBot\Contracts\Support;
 
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
 
 interface DiscordInteractableComponent extends DiscordComponent
 {
+    public function populateFromInteractionRequest(array $interactionRequest): void;
+
     public function onInteract(array $interactionRequest): void;
 
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse;
+
+    public function createResponseModal(string $title, array $inputComponents): DiscordInteractionResponse;
 
     public function onQueue(string $queue);
 
@@ -17,4 +22,8 @@ interface DiscordInteractableComponent extends DiscordComponent
     public function shouldDispatchSync();
 
     public function getParameter(): ?string;
+
+    public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void;
+
+    public function getInteractionResponseForResponseModal(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse;
 }

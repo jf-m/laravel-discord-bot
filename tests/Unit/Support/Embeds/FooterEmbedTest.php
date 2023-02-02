@@ -14,7 +14,8 @@ class FooterEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
-        $embed = new Embed($title, $description, $timestamp);
+        $url = 'url.com';
+        $embed = new Embed($title, $description, $url, $timestamp);
 
 
         $text = 'test text';
@@ -22,6 +23,7 @@ class FooterEmbedTest extends TestCase
 
 
         $this->assertEquals([
+            'url' => $url,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
@@ -37,10 +39,11 @@ class FooterEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
+        $url = 'url.com';
 
         $iconUrl = 'https://example.com/proxy';
         $proxyIconUrl = 'https://example.com/proxy';
-        $embed = new Embed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $url, $timestamp);
 
         $footerEmbed = new FooterEmbed($text, $title, $description);
 
@@ -57,6 +60,7 @@ class FooterEmbedTest extends TestCase
                 'icon_url' => $iconUrl,
                 'proxy_icon_url' => $proxyIconUrl,
             ],
+            'url' => $url,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,

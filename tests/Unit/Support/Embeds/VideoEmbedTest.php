@@ -15,7 +15,8 @@ class VideoEmbedTest extends TestCase
         $description = 'test description';
         $timestamp = '12345';
         $url = 'https://example.com';
-        $embed = new Embed($title, $description, $timestamp);
+        $embedUrl = 'url.com';
+        $embed = new Embed($title, $description, $embedUrl, $timestamp);
 
         $embed->withVideo(new VideoEmbed($url));
 
@@ -23,6 +24,7 @@ class VideoEmbedTest extends TestCase
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
+            'url' => $embedUrl,
             'video' => [
                 'url' => $url,
             ],
@@ -35,11 +37,12 @@ class VideoEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
+        $url = 'url.com';
 
         $proxyUrl = 'https://example.com/proxy';
         $height = 256;
         $width = 512;
-        $embed = new Embed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $url, $timestamp);
 
 
         $videoEmbed = new VideoEmbed($url, $title);
@@ -56,6 +59,7 @@ class VideoEmbedTest extends TestCase
                 'height' => $height,
                 'width' => $width,
             ],
+            'url' => $url,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,

@@ -42,8 +42,7 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         return null;
     }
 
-    final public function onInteract(array $interactionRequest): void
-    {
+    public function populateFromInteractionRequest(array $interactionRequest): void {
         $components = $interactionRequest['data']['components'][0]['components'];
         /** @var DiscordInteractionService $discordInteractionService */
         $discordInteractionService = app()->make(DiscordInteractionService::class);
@@ -53,15 +52,19 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
             $componentObj->setValue($component['value']);
             $this->components[] = $componentObj;
         }
+    }
+
+    final public function onInteract(array $interactionRequest): void
+    {
         $this->onModalSubmitted($interactionRequest);
     }
 
-    protected function getComponentWithParameter(string $parameter): ?GenericTextInputInteractableComponent
+    public function getComponentWithParameter(string $parameter): ?GenericTextInputInteractableComponent
     {
         return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getParameter() == $parameter)[0] ?? null;
     }
 
-    protected function getSubmitedValueForComponentWithParameter(string $parameter): ?string
+    public function getSubmitedValueForComponentWithParameter(string $parameter): ?string
     {
         return $this->getComponentWithParameter($parameter)?->value;
     }

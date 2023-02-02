@@ -94,7 +94,8 @@ abstract class GenericTextInputInteractableComponent implements DiscordInteracta
         return $this;
     }
 
-    public function setValue(string $value): void {
+    public function setValue(string $value): void
+    {
         $this->value = $value;
     }
 
@@ -135,6 +136,11 @@ abstract class GenericTextInputInteractableComponent implements DiscordInteracta
             'value' => $this->value,
             'placeholder' => $this->placeholder,
         ]);
+    }
+
+    public function populateFromInteractionRequest(array $interactionRequest): void
+    {
+
     }
 
     final public function onInteract(array $interactionRequest): void

@@ -6,6 +6,8 @@ namespace Nwilging\LaravelDiscordBot\Support\Traits;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionModalResponse;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HasDiscordInteractions
@@ -20,7 +22,23 @@ trait HasDiscordInteractions
         return null;
     }
 
+    public function createResponseModal(string $title, array $inputComponents): DiscordInteractionResponse
+    {
+        return new GenericDiscordInteractionModalResponse($title, $inputComponents, $this->getCustomId());
+    }
+
+    public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void
+    {
+    }
+
+    public function getInteractionResponseForResponseModal(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse
+    {
+        return null;
+    }
+
     abstract public function onInteract(array $interactionRequest): void;
+
+    abstract public function populateFromInteractionRequest(array $interactionRequest): void;
 
     public function getParameter(): ?string
     {

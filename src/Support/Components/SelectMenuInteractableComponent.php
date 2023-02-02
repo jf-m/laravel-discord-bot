@@ -34,10 +34,22 @@ abstract class SelectMenuInteractableComponent implements DiscordInteractableCom
      * @param SelectOptionObject[] $options
      * @param string|null $parameter
      */
-    public function __construct(array $options, ?string $parameter = null)
+    public function __construct(array $options = [], ?string $parameter = null)
     {
         $this->parameter = $parameter;
         $this->options = $options;
+    }
+
+    /**
+     * Add an option to the select menu
+     *
+     * @param SelectOptionObject $option
+     * @return $this
+     */
+    public function addOption(SelectOptionObject $option): self
+    {
+        $this->options[] = $option;
+        return $this;
     }
 
     /**
@@ -112,19 +124,23 @@ abstract class SelectMenuInteractableComponent implements DiscordInteractableCom
         ]);
     }
 
-    final public function onInteract(array $interactionRequest): void
-    {
+    public function populateFromInteractionRequest(array $interactionRequest): void {
         $values = $interactionRequest['data']['values'] ?? [];
         $submittedComponents = [];
         foreach ($values as $value) {
             $submittedComponents[] = new SelectOptionObject($value, $value);
         }
-        $this->onMenuItemsSubmitted($submittedComponents, $interactionRequest);
+        $this->options = $submittedComponents;
+    }
+
+    final public function onInteract(array $interactionRequest): void
+    {
+        $this->onMenuItemsSubmitted($interactionRequest['data']['values'] ?? [], $interactionRequest);
     }
 
     /**
-     * @param array<SelectOptionObject> $submittedComponents
+     * @param array<SelectOptionObject> $submittedValues
      * @return void
      */
-    abstract public function onMenuItemsSubmitted(array $submittedComponents, array $interactionRequest): void;
+    abstract public function onMenuItemsSubmitted(array $submittedValues, array $interactionRequest): void;
 }

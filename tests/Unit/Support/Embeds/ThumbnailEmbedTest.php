@@ -14,7 +14,8 @@ class ThumbnailEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
-        $embed = new Embed($title, $description, $timestamp);
+        $embedUrl = 'url.com';
+        $embed = new Embed($title, $description, $embedUrl, $timestamp);
         $url = 'https://example.com';
 
         $embed->withThumbnail(new ThumbnailEmbed($url));
@@ -23,6 +24,7 @@ class ThumbnailEmbedTest extends TestCase
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
+            'url' => $embedUrl,
             'thumbnail' => [
                 'url' => $url,
             ],
@@ -35,11 +37,12 @@ class ThumbnailEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
+        $embedUrl = 'url.com';
 
         $proxyUrl = 'https://example.com/proxy';
         $height = 256;
         $width = 512;
-        $embed = new Embed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $embedUrl, $timestamp);
 
         $thumbNailEmbed = new ThumbnailEmbed($url, $title);
 
@@ -56,6 +59,7 @@ class ThumbnailEmbedTest extends TestCase
                 'height' => $height,
                 'width' => $width,
             ],
+            'url' => $embedUrl,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,

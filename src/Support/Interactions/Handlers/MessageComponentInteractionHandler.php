@@ -23,7 +23,7 @@ class MessageComponentInteractionHandler extends InteractionHandler
 
     public function __construct(string $defaultBehavior, Application $laravel, DiscordInteractionService $discordInteractionService)
     {
-        $this->defaultBehavior = $defaultBehavior;
+        $this->defaultBehavior = in_array($defaultBehavior, [InteractionHandler::BEHAVIOR_LOAD, InteractionHandler::BEHAVIOR_DEFER]) ? $defaultBehavior : InteractionHandler::BEHAVIOR_DEFER;
         $this->discordInteractionService = $discordInteractionService;
         $this->laravel = $laravel;
     }
@@ -35,6 +35,7 @@ class MessageComponentInteractionHandler extends InteractionHandler
         $data = $requestData['data'] ?? null;
         if ($data && $customId = $data['custom_id'] ?? null) {
             $component = $this->discordInteractionService->getComponentFromCustomId($customId);
+            $component->populateFromInteractionRequest($requestData);
             if ($component->shouldDispatchSync()) {
                 DiscordInteractionHandlerJob::dispatchSync($requestData, $component);
             } else {

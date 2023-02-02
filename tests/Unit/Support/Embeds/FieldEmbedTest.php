@@ -14,11 +14,13 @@ class FieldEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
-        $embed = new Embed($title, $description, $timestamp);
+        $url = 'url.com';
+        $embed = new Embed($title, $description, $url, $timestamp);
         $name = 'test name';
         $value = 'test value';
         $embed->withField(new FieldEmbed($name, $value));
         $this->assertEquals([
+            'url' => $url,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
@@ -39,8 +41,9 @@ class FieldEmbedTest extends TestCase
         $title = 'test title';
         $description = 'test description';
         $timestamp = '12345';
+        $url = 'url.com';
 
-        $embed = new Embed($title, $description, $timestamp);
+        $embed = new Embed($title, $description, $url, $timestamp);
         $embed->withColor($color);
 
         $fieldEmbed = new FieldEmbed($name, $value);
@@ -56,6 +59,7 @@ class FieldEmbedTest extends TestCase
                     'inline' => true,
                 ]
             ],
+            'url' => $url,
             'title' => $title,
             'description' => $description,
             'timestamp' => $timestamp,
