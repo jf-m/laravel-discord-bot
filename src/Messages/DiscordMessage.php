@@ -2,10 +2,12 @@
 
 namespace Nwilging\LaravelDiscordBot\Messages;
 
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Support\Embed;
+
 class DiscordMessage
 {
     public string $channelId;
-    public ?array $options = null;
     public ?array $embeds = null;
     public ?array $components = null;
     public ?string $message = null;
@@ -14,7 +16,8 @@ class DiscordMessage
      * @param string $channelId
      * @return $this
      */
-    public function channelId(string $channelId) {
+    public function channelId(string $channelId)
+    {
         $this->channelId = $channelId;
         return $this;
     }
@@ -26,15 +29,6 @@ class DiscordMessage
     public function message(?string $message)
     {
         $this->message = $message;
-        return $this;
-    }
-
-    /**
-     * @param array|null $options
-     * @return $this
-     */
-    public function options(?array $options) {
-        $this->options = $options;
         return $this;
     }
 
@@ -56,5 +50,27 @@ class DiscordMessage
     {
         $this->components = $components;
         return $this;
+    }
+
+    public function toPayload(): array
+    {
+        $payload = [];
+        if ($this->embeds) {
+            $payload['embeds'] = array_map(function (Embed $embed): array {
+                return $embed->toArray();
+            }, $this->embeds);
+        }
+
+        if ($this->components) {
+            $payload['components'] = array_map(function (DiscordComponent $component): array {
+                $component->validate();
+                return $component->toArray();
+            }, $this->components);
+        }
+
+        if ($this->message) {
+            $payload['content'] = $this->message;
+        }
+        return $payload;
     }
 }

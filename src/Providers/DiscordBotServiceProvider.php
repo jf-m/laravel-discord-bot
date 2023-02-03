@@ -33,6 +33,7 @@ class DiscordBotServiceProvider extends ServiceProvider
             $config = $app->make(Config::class);
             return new DiscordApiService(
                 $config->get('discord.token'),
+                $config->get('discord.application_id'),
                 $config->get('discord.api_url'),
                 $app->make(Client::class)
             );

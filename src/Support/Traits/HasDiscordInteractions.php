@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Traits;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Facades\Discord;
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
-use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionModalResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HasDiscordInteractions
 {
     public mixed $parameter = null;
+    public ?string $token = null;
 
     public ?string $interactOnQueue = null;
     public ?string $interactOnConnection = null;
@@ -20,6 +20,22 @@ trait HasDiscordInteractions
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
         return null;
+    }
+
+    public function sendFollowupMessage(DiscordMessage $discordMessage): array {
+        return Discord::sendFollowupMessage($discordMessage, $this);
+    }
+
+    public function deleteInitialInteractionResponse(): array {
+        return Discord::deleteInitialInteractionResponse($this);
+    }
+
+    public function editInitialInteractionResponse(DiscordMessage $discordMessage): array {
+        return Discord::editInitialInteractionResponse($discordMessage, $this);
+    }
+
+    public function getToken(): ?string {
+        return $this->token;
     }
 
     public function createResponseModal(string $title, array $inputComponents): DiscordInteractionResponse

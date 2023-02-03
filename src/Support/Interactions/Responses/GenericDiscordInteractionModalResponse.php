@@ -24,7 +24,7 @@ final class GenericDiscordInteractionModalResponse extends DiscordInteractionMod
         $discordInteractionService = app()->make(DiscordInteractionService::class);
         foreach ($components as $component) {
             /** @var DiscordInteractableModalComponent $component */
-            $componentObj = $discordInteractionService->getComponentFromCustomId($component['custom_id'], '');
+            $componentObj = $discordInteractionService->getComponentFromCustomId($component['custom_id'], $interactionRequest['token'], '');
             $componentObj->setValue($component['value']);
             $this->components[] = $componentObj;
         }
@@ -44,7 +44,7 @@ final class GenericDiscordInteractionModalResponse extends DiscordInteractionMod
     {
         /** @var DiscordInteractionService $discordInteractionService */
         $discordInteractionService = app()->make(DiscordInteractionService::class);
-        $component = $discordInteractionService->getComponentFromCustomId($this->parameter);
+        $component = $discordInteractionService->getComponentFromCustomId($this->parameter, $this->token);
         if ($component instanceof DiscordInteractableComponent) {
             return $component;
         } else {

@@ -32,8 +32,9 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAndReturnsCustomResponse()
     {
         $customId = 'testCustomId';
+        $token = 'token-xxx';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['id' => '1', 'data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'token' => $token, 'data' => $customIdParam];
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
 
         Bus::fake([
@@ -46,7 +47,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $customButton = $this->createPartialMock(ButtonComponent::class, ['getInteractionResponse', 'onClicked']);
         $customButton->expects($this->once())->method('getInteractionResponse')->willReturn(new DiscordInteractionReplyResponse('custom reply'));
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
 
         $handler = new MessageComponentInteractionHandler('invalid', $this->laravel, $componentMock);
         $result = $handler->handle($request);
@@ -66,15 +67,16 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAndReturnsDefaultBehaviorResponse()
     {
         $customId = 'testCustomId';
+        $token = 'token-xxx';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['id' => '1', 'data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'token' => $token, 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
@@ -95,15 +97,16 @@ class MessageComponentInteractionHandlerTest extends TestCase
     {
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
         $customId = 'testCustomId';
+        $token = 'token-xxx';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['id' => '1', 'data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'token' => $token, 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
 
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
 
         $job = \Mockery::mock(DiscordInteractionHandlerJob::class);
         Bus::fake([
@@ -125,15 +128,16 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAndReturnsDeferWhenNoValidDefaultBehavior()
     {
         $customId = 'testCustomId';
+        $token = 'token-xxx';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['id' => '1', 'data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'token' => $token, 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
         $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
@@ -153,7 +157,8 @@ class MessageComponentInteractionHandlerTest extends TestCase
     public function testHandleDispatchesToJobAsynchronously()
     {
         $customId = 'testCustomId';
-        $parameterBag = ['id' => '1', 'data' => ['custom_id' => $customId]];
+        $token = 'token-xxx';
+        $parameterBag = ['id' => '1', 'token' => $token, 'data' => ['custom_id' => $customId]];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
@@ -162,7 +167,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(false);
 
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
@@ -174,9 +179,10 @@ class MessageComponentInteractionHandlerTest extends TestCase
 
     public function testHandleDispatchesToJobSynchronously()
     {
+        $token = 'token-xxx';
         $customId = 'testCustomId';
         $customIdParam = ['custom_id' => $customId];
-        $parameterBag = ['id' => '1', 'data' => $customIdParam];
+        $parameterBag = ['id' => '1', 'token' => $token, 'data' => $customIdParam];
 
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
@@ -185,7 +191,7 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(true);
 
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class

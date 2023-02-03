@@ -47,7 +47,7 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         $discordInteractionService = app()->make(DiscordInteractionService::class);
         foreach ($components as $component) {
             /** @var DiscordInteractableModalComponent $component */
-            $componentObj = $discordInteractionService->getComponentFromCustomId($component['custom_id'], '');
+            $componentObj = $discordInteractionService->getComponentFromCustomId($component['custom_id'], $interactionRequest['token'], '');
             $componentObj->setValue($component['value']);
             $this->components[] = $componentObj;
         }

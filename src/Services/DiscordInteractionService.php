@@ -37,7 +37,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
         $this->laravel = $laravel;
     }
 
-    public function getComponentFromCustomId(string $customId, ...$args): DiscordInteractableComponent
+    public function getComponentFromCustomId(string $customId, string $token, ...$args): DiscordInteractableComponent
     {
         [
             $className,
@@ -52,7 +52,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
             }
         }
         $model = new $className(...$args);
-
+        $model->token = $token;
         $model->parameter = $parameter;
 
         return $model;

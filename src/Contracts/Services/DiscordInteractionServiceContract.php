@@ -9,7 +9,7 @@ use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 
 interface DiscordInteractionServiceContract
 {
-    public function getComponentFromCustomId(string $customId): DiscordInteractableComponent;
+    public function getComponentFromCustomId(string $customId, string $token, ...$args): DiscordInteractableComponent;
 
     public function handleInteractionRequest(Request $request): DiscordInteractionResponse;
 }

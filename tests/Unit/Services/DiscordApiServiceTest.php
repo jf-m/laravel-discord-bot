@@ -18,6 +18,8 @@ class DiscordApiServiceTest extends TestCase
 
     protected string $apiUrl = 'https://example.com';
 
+    protected string $applicationId = 'xxxxx';
+
     protected MockInterface $httpClient;
 
     protected DiscordApiService $service;
@@ -27,7 +29,7 @@ class DiscordApiServiceTest extends TestCase
         parent::setUp();
 
         $this->httpClient = \Mockery::mock(ClientInterface::class);
-        $this->service = new DiscordApiService($this->token, $this->apiUrl, $this->httpClient);
+        $this->service = new DiscordApiService($this->token, $this->applicationId, $this->apiUrl, $this->httpClient);
     }
 
     public function testSendTextMessage()

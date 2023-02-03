@@ -2,6 +2,7 @@
 
 namespace Nwilging\LaravelDiscordBot\Contracts\Support;
 
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
 
@@ -22,6 +23,14 @@ interface DiscordInteractableComponent extends DiscordComponent
     public function shouldDispatchSync();
 
     public function getParameter(): mixed;
+
+    public function getToken(): ?string;
+
+    public function sendFollowupMessage(DiscordMessage $discordMessage): array;
+
+    public function deleteInitialInteractionResponse(): array;
+
+    public function editInitialInteractionResponse(DiscordMessage $discordMessage): array;
 
     public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void;
 

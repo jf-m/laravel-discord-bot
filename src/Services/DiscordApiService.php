@@ -6,6 +6,7 @@ namespace Nwilging\LaravelDiscordBot\Services;
 use GuzzleHttp\ClientInterface;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Psr\Http\Message\ResponseInterface;
@@ -16,51 +17,59 @@ class DiscordApiService implements DiscordApiServiceContract
 
     protected ?string $apiUrl;
 
+    protected ?string $applicationId;
+
     protected ClientInterface $httpClient;
 
-    public function __construct(?string $token, ?string $apiUrl, ClientInterface $httpClient)
+    public function __construct(?string $token, ?string $applicationId, ?string $apiUrl, ClientInterface $httpClient)
     {
         $this->token = $token;
         $this->apiUrl = $apiUrl;
         $this->httpClient = $httpClient;
+        $this->applicationId = $applicationId;
     }
 
     public function sendMessage(DiscordMessage $discordMessage): array
     {
-        $payload = [];
-        if ($discordMessage->embeds) {
-            $payload['embeds'] = array_map(function (Embed $embed): array {
-                return $embed->toArray();
-            }, $discordMessage->embeds);
-        }
-
-        if ($discordMessage->components) {
-            $payload['components'] = array_map(function (DiscordComponent $component): array {
-                $component->validate();
-                return $component->toArray();
-            }, $discordMessage->components);
-        }
-
-        if ($discordMessage->message) {
-            $payload['content'] = $discordMessage->message;
-        }
-
-        if ($discordMessage->options) {
-            $payload = array_merge($this->buildMessageOptions($discordMessage->options), $payload);
-        }
-
         $response = $this->makeRequest(
             'POST',
             sprintf('channels/%s/messages', $discordMessage->channelId),
-            $payload
+            $discordMessage->toPayload()
         );
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    protected function buildMessageOptions(array $options): array
+    public function sendFollowupMessage(DiscordMessage $discordMessage, DiscordInteractableComponent $component): array
     {
-        return [];
+        $response = $this->makeRequest(
+            'POST',
+            sprintf('/webhooks/%s/%s', $this->applicationId, $component->getToken()),
+            $discordMessage->toPayload()
+        );
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function editInitialInteractionResponse(DiscordMessage $discordMessage, DiscordInteractableComponent $component): array
+    {
+        $response = $this->makeRequest(
+            'PATCH',
+            sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $component->getToken()),
+            $discordMessage->toPayload()
+        );
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function deleteInitialInteractionResponse(DiscordInteractableComponent $component): array
+    {
+        $response = $this->makeRequest(
+            'DELETE',
+            sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $component->getToken())
+        );
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     protected function makeRequest(string $method, string $endpoint, array $payload = [], array $queryString = []): ResponseInterface
