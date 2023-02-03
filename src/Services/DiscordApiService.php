@@ -41,8 +41,8 @@ class DiscordApiService implements DiscordApiServiceContract
             }, $discordMessage->components);
         }
 
-        if ($discordMessage->message()) {
-            $payload['content'] = $discordMessage->message();
+        if ($discordMessage->message) {
+            $payload['content'] = $discordMessage->message;
         }
 
         if ($discordMessage->options) {

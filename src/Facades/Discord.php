@@ -2,12 +2,13 @@
 
 namespace Nwilging\LaravelDiscordBot\Facades;
 
-use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
+use Illuminate\Support\Facades\Facade;
 
-class Discord
-{
-    protected static function getFacadeAccessor(): string
-    {
-        return DiscordApiServiceContract::class;
-    }
+class Discord extends Facade {
+    /**
+     * Get the registered name of the component.
+     *
+     * @return string
+     */
+    protected static function getFacadeAccessor() { return 'laravel-discord-bot'; }
 }
