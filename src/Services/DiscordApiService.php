@@ -81,6 +81,7 @@ class DiscordApiService implements DiscordApiServiceContract
                 'Authorization' => sprintf('Bot %s', $this->token),
             ],
             'json' => $payload,
+            'query' => $queryString
         ]);
     }
 }
