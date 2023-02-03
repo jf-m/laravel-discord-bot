@@ -10,5 +10,5 @@ class Discord extends Facade {
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'laravel-discord-bot'; }
+    protected static function getFacadeAccessor(): string { return 'laravel-discord-bot'; }
 }
