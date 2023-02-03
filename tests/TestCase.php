@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBotTests;
 
 
+use Nwilging\LaravelDiscordBot\Facades\Discord;
+use Nwilging\LaravelDiscordBot\Providers\DiscordBotServiceProvider;
+
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     public function tearDown(): void
@@ -17,6 +20,17 @@ class TestCase extends \Orchestra\Testbench\TestCase
         }
 
         parent::tearDown();
+    }
+
+
+    protected function getPackageAliases($app)
+    {
+        return ['laravel-discord-bot' => Discord::class];
+    }
+
+    protected function getPackageProviders($app)
+    {
+        return [DiscordBotServiceProvider::class];
     }
 
     public function assertArraySubset($expectedArraySubset, $actualArray): void

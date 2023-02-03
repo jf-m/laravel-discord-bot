@@ -12,13 +12,13 @@ use Psr\Http\Message\ResponseInterface;
 
 class DiscordApiService implements DiscordApiServiceContract
 {
-    protected string $token;
+    protected ?string $token;
 
-    protected string $apiUrl;
+    protected ?string $apiUrl;
 
     protected ClientInterface $httpClient;
 
-    public function __construct(string $token, string $apiUrl, ClientInterface $httpClient)
+    public function __construct(?string $token, ?string $apiUrl, ClientInterface $httpClient)
     {
         $this->token = $token;
         $this->apiUrl = $apiUrl;

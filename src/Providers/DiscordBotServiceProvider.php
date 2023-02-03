@@ -29,6 +29,7 @@ class DiscordBotServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../../config/discord.php', 'discord');
 
         $this->app->bind('laravel-discord-bot', function($app) {
+            /** @var Config $config */
             $config = $app->make(Config::class);
             return new DiscordApiService(
                 $config->get('discord.token'),

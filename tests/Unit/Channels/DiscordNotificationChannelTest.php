@@ -34,7 +34,7 @@ class DiscordNotificationChannelTest extends TestCase
 
         Discord::shouldReceive('sendMessage')
             ->once()
-            ->with('12345', 'test message', null, null, null)
+            ->with($discordNotificationMessage)
             ->andReturn($expectedResponse);
 
         $result = (new DiscordNotificationChannel())->send($notifiable, $notification);
@@ -68,7 +68,7 @@ class DiscordNotificationChannelTest extends TestCase
 
         Discord::shouldReceive('sendMessage')
             ->once()
-            ->with('12345', null, [$embed1, $embed2], [$component1, $component2], null)
+            ->with($discordNotificationMessage)
             ->andReturn($expectedResponse);
 
         $result = (new DiscordNotificationChannel())->send($notifiable, $notification);
