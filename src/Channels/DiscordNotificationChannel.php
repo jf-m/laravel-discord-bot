@@ -20,7 +20,6 @@ class DiscordNotificationChannel implements DiscordNotificationChannelContract
 
     public function send($notifiable, DiscordNotificationContract $notification): array
     {
-        $notificationMessage = $notification->toDiscord($notifiable);
-        return $this->discordApiService->sendMessage($notificationMessage->channelId, $notificationMessage->message, $notificationMessage->embeds, $notificationMessage->components, $notificationMessage->options);
+        return $this->discordApiService->sendMessage($notification->toDiscord($notifiable));
     }
 }

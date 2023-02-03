@@ -6,6 +6,7 @@ namespace Nwilging\LaravelDiscordBot\Services;
 use GuzzleHttp\ClientInterface;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordApiServiceContract;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Psr\Http\Message\ResponseInterface;
 
@@ -24,34 +25,33 @@ class DiscordApiService implements DiscordApiServiceContract
         $this->httpClient = $httpClient;
     }
 
-    public function sendMessage(string $channelId, ?string $message = null, ?array $embeds = null, ?array $components = null, ?array $options = null): array
+    public function sendMessage(DiscordMessage $discordMessage): array
     {
         $payload = [];
-
-        if ($embeds) {
+        if ($discordMessage->embeds) {
             $payload['embeds'] = array_map(function (Embed $embed): array {
                 return $embed->toArray();
-            }, $embeds);
+            }, $discordMessage->embeds);
         }
 
-        if ($components) {
+        if ($discordMessage->components) {
             $payload['components'] = array_map(function (DiscordComponent $component): array {
                 $component->validate();
                 return $component->toArray();
-            }, $components);
+            }, $discordMessage->components);
         }
 
-        if ($message) {
-            $payload['content'] = $message;
+        if ($discordMessage->message()) {
+            $payload['content'] = $discordMessage->message();
         }
 
-        if ($options) {
-            $payload = array_merge($this->buildMessageOptions($options), $payload);
+        if ($discordMessage->options) {
+            $payload = array_merge($this->buildMessageOptions($discordMessage->options), $payload);
         }
 
         $response = $this->makeRequest(
             'POST',
-            sprintf('channels/%s/messages', $channelId),
+            sprintf('channels/%s/messages', $discordMessage->channelId),
             $payload
         );
 

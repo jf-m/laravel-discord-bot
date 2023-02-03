@@ -6,6 +6,7 @@ namespace Nwilging\LaravelDiscordBotTests\Unit\Services;
 use GuzzleHttp\ClientInterface;
 use Mockery\MockInterface;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Services\DiscordApiService;
 use Nwilging\LaravelDiscordBot\Support\Embed;
 use Nwilging\LaravelDiscordBotTests\TestCase;
@@ -58,7 +59,7 @@ class DiscordApiServiceTest extends TestCase
             ])
             ->andReturn($responseMock);
 
-        $result = $this->service->sendMessage($channelId, $message);
+        $result = $this->service->sendMessage((new DiscordMessage())->channelId($channelId)->message($message));
         $this->assertEquals($expectedResponse, $result);
     }
 
@@ -110,7 +111,7 @@ class DiscordApiServiceTest extends TestCase
             ])
             ->andReturn($responseMock);
 
-        $result = $this->service->sendMessage($channelId, null, [$embed1, $embed2], [$component1, $component2]);
+        $result = $this->service->sendMessage((new DiscordMessage())->channelId($channelId)->embeds([$embed1, $embed2])->components([$component1, $component2]));
         $this->assertEquals($expectedResponse, $result);
     }
 }
