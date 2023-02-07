@@ -10,12 +10,12 @@ use Nwilging\LaravelDiscordBot\Facades\Discord;
 class DiscordNotificationChannel implements DiscordNotificationChannelContract
 {
 
-    public function send($notifiable, DiscordNotificationContract $notification): array
+    public function send($notifiable, DiscordNotificationContract $notification): ?array
     {
         $discordMessage = $notification->toDiscord($notifiable);
         if (!$discordMessage->channelId) {
             if (!$channelId = $notifiable->routeNotificationFor('discord', $notification)) {
-                return;
+                return null;
             }
             $discordMessage->channelId($channelId);
         }
