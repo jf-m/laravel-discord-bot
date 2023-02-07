@@ -14,7 +14,7 @@ interface DiscordNotificationChannelContract
      *
      * @param Notifiable $notifiable
      * @param DiscordNotificationContract $notification
-     * @return array
+     * @return ?array
      */
-    public function send($notifiable, DiscordNotificationContract $notification): array;
+    public function send($notifiable, DiscordNotificationContract $notification): ?array;
 }
