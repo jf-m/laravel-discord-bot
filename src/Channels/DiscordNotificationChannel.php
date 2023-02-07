@@ -12,6 +12,13 @@ class DiscordNotificationChannel implements DiscordNotificationChannelContract
 
     public function send($notifiable, DiscordNotificationContract $notification): array
     {
+        $discordMessage = $notification->toDiscord($notifiable);
+        if (!$discordMessage->channelId) {
+            if (!$channelId = $notifiable->routeNotificationFor('discord', $notification)) {
+                return;
+            }
+            $discordMessage->channelId($channelId);
+        }
         return Discord::sendMessage($notification->toDiscord($notifiable));
     }
 }
