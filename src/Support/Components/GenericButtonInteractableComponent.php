@@ -6,6 +6,7 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\ButtonInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasEmojiObject;
@@ -30,6 +31,12 @@ abstract class GenericButtonInteractableComponent implements DiscordComponent, D
     {
         $this->style = $style;
         $this->label = $label;
+    }
+
+    public function withEndpoint(ButtonInteractionEndpoint $endpoint): static
+    {
+        $this->interactionEndpoint = $endpoint;
+        return $this;
     }
 
     public function getType(): int
@@ -60,16 +67,4 @@ abstract class GenericButtonInteractableComponent implements DiscordComponent, D
             'disabled' => $this->disabled,
         ]));
     }
-
-    public function populateFromInteractionRequest(array $interactionRequest): void
-    {
-
-    }
-
-    final public function onInteract(array $interactionRequest): void
-    {
-        $this->onClicked($interactionRequest);
-    }
-
-    abstract public function onClicked(array $interactionRequest): void;
 }

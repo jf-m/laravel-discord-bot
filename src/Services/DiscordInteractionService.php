@@ -7,6 +7,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordInteractionServiceContract;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\ApplicationCommandHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
@@ -38,7 +39,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
         $this->laravel = $laravel;
     }
 
-    public function getComponentFromCustomId(string $customId, string $token, ...$args): DiscordInteractableComponent
+    public function getComponentFromCustomId(string $customId, string $token): InteractionEndpoint
     {
         $decoded = json_decode($customId, flags: \JSON_UNESCAPED_UNICODE);
         $className = $decoded[0];
@@ -50,10 +51,9 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
                 }
             }
         }
-        /** @var HasDiscordInteractions&DiscordInteractableComponent $model */
-        $model = new $className(...$args);
+        /** @var InteractionEndpoint $model */
+        $model = new $className($decoded[1] ?? null, $decoded[2] ?? null);
         $model->token = $token;
-        $model->withAction($decoded[1] ?? null, $decoded[2] ?? null);
 
         return $model;
     }

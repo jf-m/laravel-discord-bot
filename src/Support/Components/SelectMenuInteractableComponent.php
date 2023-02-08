@@ -6,6 +6,7 @@ namespace Nwilging\LaravelDiscordBot\Support\Components;
 
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\SelectMenuInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Objects\SelectOptionObject;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
@@ -13,7 +14,7 @@ use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
  * Select Menu InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
  */
-abstract class SelectMenuInteractableComponent implements DiscordInteractableComponent
+class SelectMenuInteractableComponent implements DiscordInteractableComponent
 {
     use HasDiscordInteractions;
 
@@ -36,6 +37,12 @@ abstract class SelectMenuInteractableComponent implements DiscordInteractableCom
     public function __construct(array $options = [])
     {
         $this->options = $options;
+    }
+
+    public function withEndpoint(SelectMenuInteractionEndpoint $endpoint): static
+    {
+        $this->interactionEndpoint = $endpoint;
+        return $this;
     }
 
     /**
@@ -121,24 +128,4 @@ abstract class SelectMenuInteractableComponent implements DiscordInteractableCom
             'disabled' => $this->disabled,
         ]);
     }
-
-    public function populateFromInteractionRequest(array $interactionRequest): void {
-        $values = $interactionRequest['data']['values'] ?? [];
-        $submittedComponents = [];
-        foreach ($values as $value) {
-            $submittedComponents[] = new SelectOptionObject($value, $value);
-        }
-        $this->options = $submittedComponents;
-    }
-
-    final public function onInteract(array $interactionRequest): void
-    {
-        $this->onMenuItemsSubmitted($interactionRequest['data']['values'] ?? [], $interactionRequest);
-    }
-
-    /**
-     * @param array<SelectOptionObject> $submittedValues
-     * @return void
-     */
-    abstract public function onMenuItemsSubmitted(array $submittedValues, array $interactionRequest): void;
 }

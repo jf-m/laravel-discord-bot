@@ -8,9 +8,9 @@ use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalCompone
 use Nwilging\LaravelDiscordBot\Support\Traits\FiltersRecursive;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
-abstract class GenericTextInputInteractableComponent implements DiscordInteractableModalComponent
+abstract class GenericTextInputInteractableComponent
 {
-    use FiltersRecursive, HasDiscordInteractions;
+    use FiltersRecursive;
 
     public const STYLE_SHORT = 1;
     public const STYLE_PARAGRAPH = 2;
@@ -28,6 +28,8 @@ abstract class GenericTextInputInteractableComponent implements DiscordInteracta
     public ?string $value = null;
 
     protected ?string $placeholder = null;
+
+    public ?string $customId = null;
 
     public function __construct(int $style, string $label)
     {
@@ -126,24 +128,14 @@ abstract class GenericTextInputInteractableComponent implements DiscordInteracta
     {
         return $this->arrayFilterRecursive([
             'type' => $this->getType(),
-            'custom_id' => $this->getCustomId(),
             'style' => $this->style,
             'label' => $this->label,
+            'custom_id' => $this->customId,
             'min_length' => $this->minLength,
             'max_length' => $this->maxLength,
             'required' => $this->required,
             'value' => $this->value,
             'placeholder' => $this->placeholder,
         ]);
-    }
-
-    public function populateFromInteractionRequest(array $interactionRequest): void
-    {
-
-    }
-
-    final public function onInteract(array $interactionRequest): void
-    {
-        // Inputs are Modal components, the interaction happens within the parent modal
     }
 }

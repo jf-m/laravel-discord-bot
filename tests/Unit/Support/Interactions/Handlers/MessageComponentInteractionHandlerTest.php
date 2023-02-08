@@ -11,6 +11,7 @@ use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\ButtonInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionReplyResponse;
@@ -44,10 +45,10 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request->shouldReceive('all')->andReturn($parameterBag);
 
 
-        $customButton = $this->createPartialMock(ButtonComponent::class, ['getInteractionResponse', 'onClicked']);
-        $customButton->expects($this->once())->method('getInteractionResponse')->willReturn(new DiscordInteractionReplyResponse('custom reply'));
+        $customEndpoint = $this->createPartialMock(ButtonInteractionEndpoint::class, ['getInteractionResponse', 'onClick']);
+        $customEndpoint->expects($this->once())->method('getInteractionResponse')->willReturn(new DiscordInteractionReplyResponse('custom reply'));
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customEndpoint);
 
         $handler = new MessageComponentInteractionHandler('invalid', $this->laravel, $componentMock);
         $result = $handler->handle($request);
@@ -74,9 +75,9 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
-        $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
+        $endpoint = $this->createPartialMock(ButtonInteractionEndpoint::class, ['onClick']);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($endpoint);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
@@ -104,9 +105,9 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
-        $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
+        $endpoint = $this->createPartialMock(ButtonInteractionEndpoint::class, ['onClick']);
 
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($endpoint);
 
         $job = \Mockery::mock(DiscordInteractionHandlerJob::class);
         Bus::fake([
@@ -135,9 +136,9 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
-        $customButton = $this->createPartialMock(ButtonComponent::class, ['onClicked']);
+        $endpoint = $this->createPartialMock(ButtonInteractionEndpoint::class, ['onClick']);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($endpoint);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
@@ -163,11 +164,11 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
-        $customButton = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked', 'shouldDispatchSync'])->setConstructorArgs([''])->getMock();
-        $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(false);
+        $customEndpoint = $this->getMockBuilder(ButtonInteractionEndpoint::class)->onlyMethods(['onClick', 'shouldDispatchSync'])->getMock();
+        $customEndpoint->expects($this->once())->method('shouldDispatchSync')->willReturn(false);
 
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customEndpoint);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class
@@ -187,11 +188,10 @@ class MessageComponentInteractionHandlerTest extends TestCase
         $request = \Mockery::mock(Request::class);
         $request->shouldReceive('all')->andReturn($parameterBag);
 
-        $customButton = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked', 'shouldDispatchSync'])->setConstructorArgs([''])->getMock();
-        $customButton->expects($this->once())->method('shouldDispatchSync')->willReturn(true);
-
+        $customEndpoint = $this->getMockBuilder(ButtonInteractionEndpoint::class)->onlyMethods(['onClick', 'shouldDispatchSync'])->getMock();
+        $customEndpoint->expects($this->once())->method('shouldDispatchSync')->willReturn(true);
         $componentMock = \Mockery::mock(DiscordInteractionService::class);
-        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customButton);
+        $componentMock->shouldReceive('getComponentFromCustomId')->with($customId, $token)->andReturn($customEndpoint);
 
         Bus::fake([
             DiscordInteractionHandlerJob::class

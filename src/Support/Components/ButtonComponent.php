@@ -9,7 +9,7 @@ use Nwilging\LaravelDiscordBot\Support\Traits\MergesArrays;
  * Action Button InteractableComponent
  * @see https://discord.com/developers/docs/interactions/message-components#buttons
  */
-abstract class ButtonComponent extends GenericButtonInteractableComponent
+class ButtonComponent extends GenericButtonInteractableComponent
 {
     use MergesArrays;
 

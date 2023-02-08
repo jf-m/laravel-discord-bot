@@ -7,25 +7,26 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
 
 class DiscordInteractionHandlerJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, Queueable;
 
-    protected DiscordInteractableComponent $component;
+    protected InteractionEndpoint $endpoint;
     public array $data;
 
-    public function __construct(array $interactionRequest, DiscordInteractableComponent $component)
+    public function __construct(array $interactionRequest, InteractionEndpoint $endpoint)
     {
         $this->data = $interactionRequest;
-        $this->component = $component;
-        $this->onConnection($this->component->interactOnConnection ?: config('discord.interactions.default_connection'));
-        $this->onQueue($this->component->interactOnQueue ?: config('discord.interactions.default_queue'));
+        $this->endpoint = $endpoint;
+        $this->onConnection($this->endpoint->interactOnConnection ?: config('discord.interactions.default_connection'));
+        $this->onQueue($this->endpoint->interactOnQueue ?: config('discord.interactions.default_queue'));
     }
 
     public function handle(): void
     {
-        $this->component->onInteract($this->data);
+        $this->endpoint->onInteract($this->data);
     }
 
     /**

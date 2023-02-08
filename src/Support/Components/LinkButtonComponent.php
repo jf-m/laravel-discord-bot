@@ -27,7 +27,7 @@ class LinkButtonComponent extends GenericButtonInteractableComponent
         // No interactions sent by Discord for Link Buttons
     }
 
-    protected function getCustomId(): ?string {
+    public function getCustomId(): ?string {
         return null;
     }
 

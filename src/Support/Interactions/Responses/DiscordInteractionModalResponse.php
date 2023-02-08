@@ -7,10 +7,11 @@ use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalComponent;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\ModalInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
-abstract class DiscordInteractionModalResponse extends DiscordInteractionResponse implements DiscordInteractableComponent
+class DiscordInteractionModalResponse extends DiscordInteractionResponse implements DiscordInteractableComponent
 {
     use HasDiscordInteractions {
         validate as interactionValidate;
@@ -29,55 +30,18 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         parent::__construct(DiscordComponent::REPLY_WITH_MODAL, $status);
     }
 
-    public function component(GenericTextInputInteractableComponent $component): static
+    public function withComponent(mixed $id, GenericTextInputInteractableComponent $component): static
     {
+        $component->customId = $id;
         $this->components[] = $component;
         return $this;
     }
 
-    public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
+    public function withEndpoint(ModalInteractionEndpoint $endpoint): static
     {
-        return null;
+        $this->interactionEndpoint = $endpoint;
+        return $this;
     }
-
-    public function populateFromInteractionRequest(array $interactionRequest): void {
-        $components = $interactionRequest['data']['components'][0]['components'];
-        /** @var DiscordInteractionService $discordInteractionService */
-        $discordInteractionService = app()->make(DiscordInteractionService::class);
-        foreach ($components as $component) {
-            /** @var DiscordInteractableModalComponent $component */
-            $componentObj = $discordInteractionService->getComponentFromCustomId($component['custom_id'], $interactionRequest['token'], '');
-            $componentObj->setValue($component['value']);
-            $this->components[] = $componentObj;
-        }
-    }
-
-    final public function onInteract(array $interactionRequest): void
-    {
-        $this->onModalSubmitted($interactionRequest);
-    }
-
-    public function getComponentWithActionName(mixed $parameter): ?GenericTextInputInteractableComponent
-    {
-        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getActionName() == $parameter)[0] ?? null;
-    }
-
-    public function getSubmittedValueForComponentWithActionName(mixed $parameter): ?string
-    {
-        return $this->getComponentWithActionName($parameter)?->value;
-    }
-
-    public function getComponentWithActionValue(mixed $parameter): ?GenericTextInputInteractableComponent
-    {
-        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getActionValue() == $parameter)[0] ?? null;
-    }
-
-    public function getSubmittedValueForComponentWithActionValue(mixed $parameter): ?string
-    {
-        return $this->getComponentWithActionValue($parameter)?->value;
-    }
-
-    abstract public function onModalSubmitted(array $interactionRequest): void;
 
     public function validate(): void
     {
@@ -93,7 +57,6 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
             if (!($component instanceof GenericTextInputInteractableComponent)) {
                 throw new \Exception(sprintf("Support for components in modals is currently limited to type 4 (Text Input). https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal"));
             }
-            $component->validate();
         }
     }
 
@@ -105,11 +68,11 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
     public function getData(): ?array
     {
         return array_filter([
-            'custom_id'  => $this->getCustomId(),
-            'title'      => $this->title,
+            'custom_id' => $this->getCustomId(),
+            'title' => $this->title,
             'components' => [
                 [
-                    'type'       => DiscordComponent::TYPE_ACTION_ROW,
+                    'type' => DiscordComponent::TYPE_ACTION_ROW,
                     'components' => array_map(fn(GenericTextInputInteractableComponent $component) => $component->toArray(), $this->components)
                 ]
             ],

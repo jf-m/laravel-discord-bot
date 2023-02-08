@@ -8,6 +8,7 @@ use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Jobs\DiscordInteractionHandlerJob;
 use Nwilging\LaravelDiscordBot\Support\Components\ButtonComponent;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericButtonInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\ButtonInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Objects\EmojiObject;
 use Nwilging\LaravelDiscordBotTests\TestCase;
 
@@ -17,7 +18,7 @@ class ButtonComponentTest extends TestCase
     {
         $label = 'test label';
 
-        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
+        $component = new ButtonComponent($label);
 
         $this->assertArraySubset([
             'type' => DiscordComponent::TYPE_BUTTON,
@@ -35,7 +36,7 @@ class ButtonComponentTest extends TestCase
         $emoji = \Mockery::mock(EmojiObject::class);
         $emoji->shouldReceive('toArray')->andReturn($expectedEmojiArray);
 
-        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
+        $component = new ButtonComponent($label);
         $component->withEmoji($emoji);
         $component->disabled();
 
@@ -55,7 +56,7 @@ class ButtonComponentTest extends TestCase
     {
         $label = 'test label';
 
-        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
+        $component = new ButtonComponent($label);
 
         switch ($expectedStyle) {
             case GenericButtonInteractableComponent::STYLE_PRIMARY:
@@ -84,11 +85,11 @@ class ButtonComponentTest extends TestCase
         $label = 'test label';
         $interactionRequest = ['data' => ['id' => '1']];
 
-        $component = $this->getMockBuilder(ButtonComponent::class)->onlyMethods(['onClicked'])->setConstructorArgs([$label])->getMock();
-        $component->expects($this->once())
-            ->method('onClicked')
+        $endpoint = $this->getMockBuilder(ButtonInteractionEndpoint::class)->onlyMethods(['onClick'])->setConstructorArgs([$label])->getMock();
+        $endpoint->expects($this->once())
+            ->method('onClick')
             ->with($interactionRequest);
-        $job = new DiscordInteractionHandlerJob($interactionRequest, $component);
+        $job = new DiscordInteractionHandlerJob($interactionRequest, $endpoint);
         $job->handle();
     }
 
