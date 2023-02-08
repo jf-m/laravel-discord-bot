@@ -343,12 +343,12 @@ class MyCustomInteractableDiscordButton extends ButtonComponent implements Shoul
     
     public function getInteractionResponseForResponseModal(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse {
         // When the user submits the modal, we reply to him directly, using the value they just submitted. 
-        return new DiscordInteractionReplyResponse('Hi ' . $modal->getSubmittedValueForComponentWithParameter('name') . ', welcome !');
+        return new DiscordInteractionReplyResponse('Hi ' . $modal->getComponentWithActionValue('name') . ', welcome !');
     }
 
     public function onResponseModalSubmitted(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): void {
         // We can then perform an action that will use the user input
-        \Log::info('Hi, ' . $modal->getSubmittedValueForComponentWithParameter('name') . ' and welcome.');
+        \Log::info('Hi, ' . $modal->getComponentWithActionValue('name') . ' and welcome.');
     }
 }
 ```
@@ -363,18 +363,18 @@ class MyCustomModalComponent extends DiscordInteractionModalResponse
     public function __construct()
     {
         parent::__construct('Modal Title', [
-            new ShortTextInputComponent('Please enter your name', 'name')
+            (new ShortTextInputComponent('Please enter your name')->withAction('name')
         ]);
     }
 
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse
     {
-        return new DiscordInteractionReplyResponse('Hi ' . $this->getSubmittedValueForComponentWithParameter('name') . ', welcome !');
+        return new DiscordInteractionReplyResponse('Hi ' . $this->getComponentWithActionValue('name') . ', welcome !');
     }
 
     public function onModalSubmitted(array $interactionRequest): void
     {
-        \Log::info('Hi, ' . $this->getSubmittedValueForComponentWithParameter('name') . ' and welcome.');
+        \Log::info('Hi, ' . $this->getComponentWithActionValue('name') . ' and welcome.');
     }
 }
 ```
@@ -397,17 +397,17 @@ class MyCustomInteractableDiscordButton extends ButtonComponent implements Shoul
 }
 ```
 
-## Interaction Parameter
+## Interaction Action Name / Action Value
 
-When your `Component` or your `Modal` is sent to Discord, its classname is serialized along with its public property `parameter` and this serialized value is passed to Discord. When Discord send an interaction to your webhook, the original `Component` or `Model` class is recreated, and its public property `parameter` is populated.
-This `parameter` can be used at your convenience to save data between interactions. Example:
+When your `Component` or your `Modal` is sent to Discord, its classname is serialized along with its public property `actionName` and `actionValue` and these serialized value are passed to Discord. When Discord send an interaction to your webhook, the original `Component` or `Model` class is recreated, and its public property `actionValue` and `actionName` are populated.
+These `actionValue` and `actionName` can be used at your convenience to save data between interactions. Example:
 
 ```php
 class ArchiveArticleDiscordButton extends ButtonComponent implements ShouldQueue
 {
     public function onClicked(array $interactionRequest): void
     {
-        $article = Article::find($this->parameter);
+        $article = Article::find($this->actionValue);
         $article->archive();
     }
 
@@ -424,7 +424,7 @@ class ArchiveArticleDiscordButton extends ButtonComponent implements ShouldQueue
         $oldArticles = Article::where('created_at', '<=', Carbon::now()->subYear())->get();
         $actionRow = new ActionRow();
         foreach($oldArticles as $article) {
-            $actionRow->addComponent(new ArchiveArticleDiscordButton(label: $article->name, parameter: $article->id));
+            $actionRow->addComponent((new ArchiveArticleDiscordButton(label: $article->name))->withAction($article->id));
         }
         return (new DiscordMessage())->channelId('MY_CHANNEL_ID')
                                      ->message("The following articles are old. Click on the ones you want to archive:")

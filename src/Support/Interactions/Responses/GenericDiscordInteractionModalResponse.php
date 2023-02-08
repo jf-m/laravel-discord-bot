@@ -12,9 +12,9 @@ use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 final class GenericDiscordInteractionModalResponse extends DiscordInteractionModalResponse implements ShouldQueue
 {
 
-    public function __construct(?string $title = null, array $components = [], mixed $parameter = null, ?int $status = 200)
+    public function __construct(?string $title = null, array $components = [], ?int $status = 200)
     {
-        parent::__construct($title ?: '', $components, $parameter, $status);
+        parent::__construct($title ?: '', $components, $status);
     }
 
     public function populateFromInteractionRequest(array $interactionRequest): void

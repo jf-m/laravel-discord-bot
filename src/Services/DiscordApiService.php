@@ -76,12 +76,12 @@ class DiscordApiService implements DiscordApiServiceContract
     {
         $url = sprintf('%s/%s', $this->apiUrl, $endpoint);
 
-        return $this->httpClient->request($method, $url, [
+        return $this->httpClient->request($method, $url, array_filter([
             'headers' => [
                 'Authorization' => sprintf('Bot %s', $this->token),
             ],
             'json' => $payload,
             'query' => $queryString
-        ]);
+        ]));
     }
 }

@@ -12,6 +12,7 @@ use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\ApplicationCommandH
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\PingHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
+use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -39,10 +40,8 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
 
     public function getComponentFromCustomId(string $customId, string $token, ...$args): DiscordInteractableComponent
     {
-        [
-            $className,
-            $parameter
-        ] = json_decode($customId, flags: \JSON_UNESCAPED_UNICODE);
+        $decoded = json_decode($customId, flags: \JSON_UNESCAPED_UNICODE);
+        $className = $decoded[0];
         if (!class_exists($className)) {
             foreach (config('discord.interactions.namespaces', []) as $namespace) {
                 if (class_exists($namespace . $className)) {
@@ -51,9 +50,15 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
                 }
             }
         }
+        /** @var HasDiscordInteractions&DiscordInteractableComponent $model */
         $model = new $className(...$args);
         $model->token = $token;
-        $model->parameter = $parameter;
+        if (count($decoded) > 1) {
+            $model->action_value = $decoded[1];
+            if (count($decoded) > 2) {
+                $model->action_name = $decoded[2];
+            }
+        }
 
         return $model;
     }

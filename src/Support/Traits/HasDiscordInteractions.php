@@ -9,9 +9,11 @@ use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
 
+
 trait HasDiscordInteractions
 {
-    public mixed $parameter = null;
+    public mixed $actionValue = null;
+    public mixed $actionName = null;
     public ?string $token = null;
 
     public ?string $interactOnQueue = null;
@@ -22,19 +24,30 @@ trait HasDiscordInteractions
         return null;
     }
 
-    public function sendFollowupMessage(DiscordMessage $discordMessage): array {
+    public function withAction(mixed $actionValue, mixed $actionName = null): static
+    {
+        $this->actionName = $actionName;
+        $this->actionValue = $actionValue;
+        return $this;
+    }
+
+    public function sendFollowupMessage(DiscordMessage $discordMessage): array
+    {
         return Discord::sendFollowupMessage($discordMessage, $this);
     }
 
-    public function deleteInitialInteractionResponse(): array {
+    public function deleteInitialInteractionResponse(): array
+    {
         return Discord::deleteInitialInteractionResponse($this);
     }
 
-    public function editInitialInteractionResponse(DiscordMessage $discordMessage): array {
+    public function editInitialInteractionResponse(DiscordMessage $discordMessage): array
+    {
         return Discord::editInitialInteractionResponse($discordMessage, $this);
     }
 
-    public function getToken(): ?string {
+    public function getToken(): ?string
+    {
         return $this->token;
     }
 
@@ -56,9 +69,14 @@ trait HasDiscordInteractions
 
     abstract public function populateFromInteractionRequest(array $interactionRequest): void;
 
-    public function getParameter(): mixed
+    public function getActionName(): mixed
     {
-        return $this->parameter;
+        return $this->actionName;
+    }
+
+    public function getActionValue(): mixed
+    {
+        return $this->actionValue;
     }
 
     /**
@@ -75,10 +93,16 @@ trait HasDiscordInteractions
             }
         }
 
-        return json_encode([
-            $className,
-            $this->parameter
-        ], \JSON_UNESCAPED_UNICODE);
+        $toEncode = [$className];
+
+        if ($this->actionValue !== null || $this->actionName !== null) {
+            $toEncode[] = $this->actionValue;
+            if ($this->actionName !== null) {
+                $toEncode[] = $this->actionName;
+            }
+        }
+
+        return json_encode($toEncode, \JSON_UNESCAPED_UNICODE);
     }
 
     public function onQueue(string $queue): self

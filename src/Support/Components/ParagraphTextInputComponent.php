@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class ParagraphTextInputComponent extends GenericTextInputInteractableComponent
 {
-    public function __construct(string $label, mixed $parameter = null)
+    public function __construct(string $label)
     {
-        parent::__construct(static::STYLE_PARAGRAPH, $label, $parameter);
+        parent::__construct(static::STYLE_PARAGRAPH, $label);
     }
 }

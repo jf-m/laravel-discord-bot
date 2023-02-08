@@ -22,11 +22,10 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
      */
     protected array $components = [];
 
-    public function __construct(string $title, array $components = [], mixed $parameter = null, ?int $status = 200)
+    public function __construct(string $title, array $components = [], ?int $status = 200)
     {
         $this->title = $title;
         $this->components = $components;
-        $this->parameter = $parameter;
         parent::__construct(DiscordComponent::REPLY_WITH_MODAL, $status);
     }
 
@@ -58,14 +57,24 @@ abstract class DiscordInteractionModalResponse extends DiscordInteractionRespons
         $this->onModalSubmitted($interactionRequest);
     }
 
-    public function getComponentWithParameter(mixed $parameter): ?GenericTextInputInteractableComponent
+    public function getComponentWithActionName(mixed $parameter): ?GenericTextInputInteractableComponent
     {
-        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getParameter() == $parameter)[0] ?? null;
+        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getActionName() == $parameter)[0] ?? null;
     }
 
-    public function getSubmittedValueForComponentWithParameter(mixed $parameter): ?string
+    public function getSubmittedValueForComponentWithActionName(mixed $parameter): ?string
     {
-        return $this->getComponentWithParameter($parameter)?->value;
+        return $this->getComponentWithActionName($parameter)?->value;
+    }
+
+    public function getComponentWithActionValue(mixed $parameter): ?GenericTextInputInteractableComponent
+    {
+        return array_filter($this->components, fn(DiscordComponent $component) => $component instanceof GenericTextInputInteractableComponent && $component->getActionValue() == $parameter)[0] ?? null;
+    }
+
+    public function getSubmittedValueForComponentWithActionValue(mixed $parameter): ?string
+    {
+        return $this->getComponentWithActionValue($parameter)?->value;
     }
 
     abstract public function onModalSubmitted(array $interactionRequest): void;

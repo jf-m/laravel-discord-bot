@@ -32,11 +32,9 @@ abstract class SelectMenuInteractableComponent implements DiscordInteractableCom
 
     /**
      * @param SelectOptionObject[] $options
-     * @param string|null $parameter
      */
-    public function __construct(array $options = [], mixed $parameter = null)
+    public function __construct(array $options = [])
     {
-        $this->parameter = $parameter;
         $this->options = $options;
     }
 

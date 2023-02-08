@@ -16,9 +16,9 @@ class LinkButtonComponent extends GenericButtonInteractableComponent
 
     protected string $url;
 
-    public function __construct(string $label, string $url, mixed $parameter = null)
+    public function __construct(string $label, string $url)
     {
-        parent::__construct(static::STYLE_LINK, $label, $parameter);
+        parent::__construct(static::STYLE_LINK, $label);
         $this->url = $url;
     }
 

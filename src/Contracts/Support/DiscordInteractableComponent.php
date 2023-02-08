@@ -18,11 +18,15 @@ interface DiscordInteractableComponent extends DiscordComponent
 
     public function onQueue(string $queue);
 
+    public function withAction(mixed $actionValue, mixed $actionName = null): static;
+
     public function onConnection(string $connection);
 
     public function shouldDispatchSync();
 
-    public function getParameter(): mixed;
+    public function getActionName(): mixed;
+
+    public function getActionValue(): mixed;
 
     public function getToken(): ?string;
 

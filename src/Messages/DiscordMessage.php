@@ -7,7 +7,7 @@ use Nwilging\LaravelDiscordBot\Support\Embed;
 
 class DiscordMessage
 {
-    public string $channelId;
+    public ?string $channelId = null;
     public ?array $embeds = null;
     public ?array $components = null;
     public ?string $message = null;
