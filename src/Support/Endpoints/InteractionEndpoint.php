@@ -4,12 +4,10 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Endpoints;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Http\Request;
 use Nwilging\LaravelDiscordBot\Facades\Discord;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionModalResponse;
-use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
 
 abstract class InteractionEndpoint
 {
@@ -31,7 +29,7 @@ abstract class InteractionEndpoint
         return null;
     }
 
-    public function getInteractionResponseForResponseModal(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse
+    public function getInteractionResponseForResponseModal(DiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse
     {
         return null;
     }
