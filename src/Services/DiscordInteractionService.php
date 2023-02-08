@@ -53,12 +53,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
         /** @var HasDiscordInteractions&DiscordInteractableComponent $model */
         $model = new $className(...$args);
         $model->token = $token;
-        if (count($decoded) > 1) {
-            $model->action_value = $decoded[1];
-            if (count($decoded) > 2) {
-                $model->action_name = $decoded[2];
-            }
-        }
+        $model->withAction($decoded[1] ?? null, $decoded[2] ?? null);
 
         return $model;
     }
