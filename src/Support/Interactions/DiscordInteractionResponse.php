@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Nwilging\LaravelDiscordBot\Support\Interactions;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
 
 class DiscordInteractionResponse implements Arrayable
 {

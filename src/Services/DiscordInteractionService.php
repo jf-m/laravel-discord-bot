@@ -11,6 +11,7 @@ use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\ApplicationCommandHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\ModalInteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\PingHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
@@ -29,7 +30,7 @@ class DiscordInteractionService implements DiscordInteractionServiceContract
         InteractionHandler::REQUEST_TYPE_PING => PingHandler::class,
         InteractionHandler::REQUEST_TYPE_APPLICATION_COMMAND => ApplicationCommandHandler::class,
         InteractionHandler::REQUEST_TYPE_MESSAGE_COMPONENT => MessageComponentInteractionHandler::class,
-        InteractionHandler::REQUEST_TYPE_MODAL_SUBMIT => MessageComponentInteractionHandler::class
+        InteractionHandler::REQUEST_TYPE_MODAL_SUBMIT => ModalInteractionHandler::class
     ];
 
     public function __construct(string $applicationId, string $publicKey, Application $laravel)

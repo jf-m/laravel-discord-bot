@@ -14,20 +14,8 @@ use Nwilging\LaravelDiscordBot\Support\Interactions\InteractionHandler;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionModalResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class MessageComponentInteractionHandler extends InteractionHandler
+class ModalInteractionHandler extends MessageComponentInteractionHandler
 {
-    protected string $defaultBehavior;
-
-    protected Application $laravel;
-
-    protected DiscordInteractionService $discordInteractionService;
-
-    public function __construct(string $defaultBehavior, Application $laravel, DiscordInteractionService $discordInteractionService)
-    {
-        $this->defaultBehavior = in_array($defaultBehavior, [InteractionHandler::BEHAVIOR_LOAD, InteractionHandler::BEHAVIOR_DEFER]) ? $defaultBehavior : InteractionHandler::BEHAVIOR_DEFER;
-        $this->discordInteractionService = $discordInteractionService;
-        $this->laravel = $laravel;
-    }
 
     public function handle(Request $request): DiscordInteractionResponse
     {
@@ -36,13 +24,17 @@ class MessageComponentInteractionHandler extends InteractionHandler
         $data = $requestData['data'] ?? null;
         if ($data && $customId = $data['custom_id'] ?? null) {
             $endpoint = $this->discordInteractionService->getComponentFromCustomId($customId, $requestData['token']);
+            $inputs = []
+            foreach ($data['components'][0]['components'] as $component) {
+                $inputs[$component['custom_id']] = $component['value'];
+            }
             $endpoint->populateFromInteractionRequest($requestData);
             if ($endpoint->shouldDispatchSync()) {
-                DiscordInteractionHandlerJob::dispatchSync($requestData, $endpoint);
+                DiscordInteractionHandlerJob::dispatchSync($requestData, $endpoint, $inputs);
             } else {
-                DiscordInteractionHandlerJob::dispatch($requestData, $endpoint);
+                DiscordInteractionHandlerJob::dispatch($requestData, $endpoint, $inputs);
             }
-            if ($response = $endpoint->getInteractionResponse($requestData)) {
+            if ($response = $endpoint->getInteractionResponseForResponseModal($inputs, $requestData)) {
                 if ($response instanceof DiscordInteractionModalResponse) {
                     $response->prepareCustomId($endpoint);
                 }

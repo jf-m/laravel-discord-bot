@@ -7,17 +7,16 @@ use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalComponent;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputInteractableComponent;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Endpoints\ModalInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
 use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
-class DiscordInteractionModalResponse extends DiscordInteractionResponse implements DiscordInteractableComponent
+class DiscordInteractionModalResponse extends DiscordInteractionResponse
 {
-    use HasDiscordInteractions {
-        validate as interactionValidate;
-    }
 
     protected string $title;
+    protected mixed $customId;
     /**
      * @var GenericTextInputInteractableComponent[]
      */
@@ -36,21 +35,18 @@ class DiscordInteractionModalResponse extends DiscordInteractionResponse impleme
         return $this;
     }
 
-    public function withEndpoint(ModalInteractionEndpoint $endpoint): static
+    public function prepareCustomId(InteractionEndpoint $endpoint): void
     {
-        $this->interactionEndpoint = $endpoint;
-        return $this;
+        $this->customId = $endpoint->getCustomId();
     }
 
     public function validate(): void
     {
-        $this->interactionValidate();
-
         if (count($this->components) > 5) {
-            throw new \Exception(sprintf("Discord does not allow more than 5 components in any Modal Responses. https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal"));
+            throw new \Exception(sprintf("Discord does not allow more than 5 components in any Modals Responses. https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal"));
         }
         if (count($this->components) < 1) {
-            throw new \Exception(sprintf("Discord Modal Responses needs at least one component. https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal"));
+            throw new \Exception(sprintf("Discord Modals Responses needs at least one component. https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal"));
         }
         foreach ($this->components as $component) {
             if (!($component instanceof GenericTextInputInteractableComponent)) {
@@ -67,7 +63,7 @@ class DiscordInteractionModalResponse extends DiscordInteractionResponse impleme
     public function getData(): ?array
     {
         return array_filter([
-            'custom_id' => $this->getCustomId(),
+            'custom_id' => $this->customId,
             'title' => $this->title,
             'components' => [
                 [

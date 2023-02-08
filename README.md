@@ -337,8 +337,8 @@ class MyCustomInteractableDiscordButton extends ButtonComponent implements Shoul
     }
 
     public function getInteractionResponse(array $interactionRequest): ?DiscordInteractionResponse {
-        // As a response to the click on the button, the modal "My Modal" will pop asking the user his name.
-        return $this->createResponseModal('My Modal', [ new ShortTextInputComponent('Please enter your name', 'name') ]);
+        // As a response to the click on the button, the modal "My Modals" will pop asking the user his name.
+        return $this->createResponseModal('My Modals', [ new ShortTextInputComponent('Please enter your name', 'name') ]);
     }
     
     public function getInteractionResponseForResponseModal(GenericDiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse {
@@ -362,7 +362,7 @@ class MyCustomModalComponent extends DiscordInteractionModalResponse
 {
     public function __construct()
     {
-        parent::__construct('Modal Title', [
+        parent::__construct('Modals Title', [
             (new ShortTextInputComponent('Please enter your name')->withAction('name')
         ]);
     }

@@ -29,7 +29,7 @@ abstract class InteractionEndpoint
         return null;
     }
 
-    public function getInteractionResponseForResponseModal(DiscordInteractionModalResponse $modal, array $interactionRequest): ?DiscordInteractionResponse
+    public function getInteractionResponseForResponseModal(array $modalInputs, array $interactionRequest): ?DiscordInteractionResponse
     {
         return null;
     }
@@ -49,7 +49,7 @@ abstract class InteractionEndpoint
         return Discord::editInitialInteractionResponse($discordMessage, $this);
     }
 
-    public function onResponseModalSubmitted(ModalInteractionEndpoint $modal, array $interactionRequest): void
+    public function onResponseModalSubmitted(array $inputs, array $interactionRequest): void
     {
     }
 
