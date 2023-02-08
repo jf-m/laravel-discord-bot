@@ -23,11 +23,10 @@ class DiscordInteractionModalResponse extends DiscordInteractionResponse impleme
      */
     protected array $components = [];
 
-    public function __construct(string $title, array $components = [], ?int $status = 200)
+    public function __construct(string $title)
     {
         $this->title = $title;
-        $this->components = $components;
-        parent::__construct(DiscordComponent::REPLY_WITH_MODAL, $status);
+        parent::__construct(DiscordComponent::REPLY_WITH_MODAL, 200);
     }
 
     public function withComponent(mixed $id, GenericTextInputInteractableComponent $component): static

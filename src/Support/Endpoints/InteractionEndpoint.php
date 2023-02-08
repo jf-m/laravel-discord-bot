@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Nwilging\LaravelDiscordBot\Facades\Discord;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\DiscordInteractionModalResponse;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Responses\GenericDiscordInteractionModalResponse;
 
 abstract class InteractionEndpoint
@@ -48,11 +49,6 @@ abstract class InteractionEndpoint
     public function editInitialInteractionResponse(DiscordMessage $discordMessage): array
     {
         return Discord::editInitialInteractionResponse($discordMessage, $this);
-    }
-
-    public function createResponseModal(string $title, array $inputComponents): DiscordInteractionResponse
-    {
-        return new GenericDiscordInteractionModalResponse($title, $inputComponents, $this->getCustomId());
     }
 
     public function onResponseModalSubmitted(ModalInteractionEndpoint $modal, array $interactionRequest): void
