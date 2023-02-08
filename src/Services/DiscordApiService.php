@@ -9,6 +9,7 @@ use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
 use Nwilging\LaravelDiscordBot\Messages\DiscordMessage;
 use Nwilging\LaravelDiscordBot\Support\Embed;
+use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
 use Psr\Http\Message\ResponseInterface;
 
 class DiscordApiService implements DiscordApiServiceContract
@@ -40,33 +41,33 @@ class DiscordApiService implements DiscordApiServiceContract
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function sendFollowupMessage(DiscordMessage $discordMessage, DiscordInteractableComponent $component): array
+    public function sendFollowupMessage(DiscordMessage $discordMessage, InteractionEndpoint $endpoint): array
     {
         $response = $this->makeRequest(
             'POST',
-            sprintf('/webhooks/%s/%s', $this->applicationId, $component->getToken()),
+            sprintf('/webhooks/%s/%s', $this->applicationId, $endpoint->token),
             $discordMessage->toPayload()
         );
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function editInitialInteractionResponse(DiscordMessage $discordMessage, DiscordInteractableComponent $component): array
+    public function editInitialInteractionResponse(DiscordMessage $discordMessage, InteractionEndpoint $endpoint): array
     {
         $response = $this->makeRequest(
             'PATCH',
-            sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $component->getToken()),
+            sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $endpoint->token),
             $discordMessage->toPayload()
         );
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function deleteInitialInteractionResponse(DiscordInteractableComponent $component): array
+    public function deleteInitialInteractionResponse(InteractionEndpoint $endpoint): array
     {
         $response = $this->makeRequest(
             'DELETE',
-            sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $component->getToken())
+            sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $endpoint->token)
         );
 
         return json_decode($response->getBody()->getContents(), true);

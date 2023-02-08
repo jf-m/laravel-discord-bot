@@ -107,7 +107,7 @@ class TestNotification extends Notification implements DiscordNotificationContra
 
 ## Components
 
-Each `DiscordMessage` can include multiple `LinkButtonComponent` and [Interactable Components](#interactions)
+Each `DiscordMessage` can include multiple `LinkButtonComponent`, `ButtonComponent` or `SelectMenuComponent`
 
 ```php
 class TestNotification extends Notification implements DiscordNotificationContract
