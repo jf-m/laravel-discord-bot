@@ -25,7 +25,7 @@ class ModalInteractionHandler extends MessageComponentInteractionHandler
         if ($data && $customId = $data['custom_id'] ?? null) {
             $endpoint = $this->discordInteractionService->getComponentFromCustomId($customId, $requestData['token']);
             $inputs = [];
-            foreach ($data['data']['components'] as $actionRow) {
+            foreach ($data['components'] as $actionRow) {
                 $component = $actionRow['components'][0];
                 $inputs[$component['custom_id']] = $component['value'];
             }
