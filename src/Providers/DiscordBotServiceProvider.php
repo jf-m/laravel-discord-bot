@@ -14,6 +14,7 @@ use Nwilging\LaravelDiscordBot\Contracts\Services\DiscordInteractionServiceContr
 use Nwilging\LaravelDiscordBot\Services\DiscordApiService;
 use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\MessageComponentInteractionHandler;
+use Nwilging\LaravelDiscordBot\Support\Interactions\Handlers\ModalInteractionHandler;
 
 class DiscordBotServiceProvider extends ServiceProvider
 {
@@ -55,6 +56,10 @@ class DiscordBotServiceProvider extends ServiceProvider
         });
 
         $this->app->when(MessageComponentInteractionHandler::class)->needs('$defaultBehavior')->give(function (): string {
+            return $this->app->make(Config::class)->get('discord.interactions.component_interaction_default_behavior');
+        });
+
+        $this->app->when(ModalInteractionHandler::class)->needs('$defaultBehavior')->give(function (): string {
             return $this->app->make(Config::class)->get('discord.interactions.component_interaction_default_behavior');
         });
 

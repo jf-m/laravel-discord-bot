@@ -63,14 +63,12 @@ class DiscordInteractionModalResponse extends DiscordInteractionResponse
     public function getData(): ?array
     {
         return array_filter([
-            'custom_id' => $this->customId,
-            'title' => $this->title,
-            'components' => [
-                [
-                    'type' => DiscordComponent::TYPE_ACTION_ROW,
-                    'components' => array_map(fn(GenericTextInputInteractableComponent $component) => $component->toArray(), $this->components)
-                ]
-            ],
+            'custom_id'  => $this->customId,
+            'title'      => $this->title,
+            'components' => array_map(fn(GenericTextInputInteractableComponent $component) => [
+                'type'       => DiscordComponent::TYPE_ACTION_ROW,
+                'components' => [$component->toArray()]
+            ], $this->components),
         ]);
     }
 }
