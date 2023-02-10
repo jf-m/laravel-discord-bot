@@ -3,14 +3,9 @@
 namespace Nwilging\LaravelDiscordBot\Support\Interactions\Responses;
 
 use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordComponent;
-use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableComponent;
-use Nwilging\LaravelDiscordBot\Contracts\Support\DiscordInteractableModalComponent;
-use Nwilging\LaravelDiscordBot\Services\DiscordInteractionService;
 use Nwilging\LaravelDiscordBot\Support\Components\GenericTextInputInteractableComponent;
 use Nwilging\LaravelDiscordBot\Support\Endpoints\InteractionEndpoint;
-use Nwilging\LaravelDiscordBot\Support\Endpoints\ModalInteractionEndpoint;
 use Nwilging\LaravelDiscordBot\Support\Interactions\DiscordInteractionResponse;
-use Nwilging\LaravelDiscordBot\Support\Traits\HasDiscordInteractions;
 
 class DiscordInteractionModalResponse extends DiscordInteractionResponse
 {
