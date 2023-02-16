@@ -2,6 +2,12 @@
 
 return [
     /**
+     * Is Discord enabled
+     */
+
+    'enabled' => env('DISCORD_ENABLED', true),
+
+    /**
      * API token generated for the Discord Bot
      */
 

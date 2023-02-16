@@ -38,6 +38,10 @@ class DiscordApiService implements DiscordApiServiceContract
             $discordMessage->toPayload()
         );
 
+        if ($response === null) {
+            return [];
+        }
+
         return json_decode($response->getBody()->getContents(), true);
     }
 
@@ -48,6 +52,10 @@ class DiscordApiService implements DiscordApiServiceContract
             sprintf('/webhooks/%s/%s', $this->applicationId, $endpoint->token),
             $discordMessage->toPayload()
         );
+
+        if ($response === null) {
+            return [];
+        }
 
         return json_decode($response->getBody()->getContents(), true);
     }
@@ -60,6 +68,10 @@ class DiscordApiService implements DiscordApiServiceContract
             $discordMessage->toPayload()
         );
 
+        if ($response === null) {
+            return [];
+        }
+
         return json_decode($response->getBody()->getContents(), true);
     }
 
@@ -70,11 +82,19 @@ class DiscordApiService implements DiscordApiServiceContract
             sprintf('/webhooks/%s/%s/messages/@original', $this->applicationId, $endpoint->token)
         );
 
+        if ($response === null) {
+            return [];
+        }
+
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    protected function makeRequest(string $method, string $endpoint, array $payload = [], array $queryString = []): ResponseInterface
+    protected function makeRequest(string $method, string $endpoint, array $payload = [], array $queryString = []): ?ResponseInterface
     {
+        if (!config('discord.enabled', true)) {
+            return null;
+        }
+
         $url = sprintf('%s/%s', $this->apiUrl, $endpoint);
 
         return $this->httpClient->request($method, $url, array_filter([
